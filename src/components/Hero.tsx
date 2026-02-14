@@ -22,7 +22,7 @@ export default function Hero() {
 
       <div className="relative z-10 text-center max-w-4xl mx-auto animate-float">
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4">
-          <span className="text-gradient">RapidMVP.io</span>
+          <span className="text-gradient">RapidMvᵖ.io</span>
         </h1>
         <p className="text-xl sm:text-2xl md:text-3xl text-white font-semibold mb-10">
           From Idea to Production in Weeks

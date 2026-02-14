@@ -22,7 +22,7 @@ export default function Navigation() {
           to="/"
           className="text-xl font-bold bg-gradient-to-r from-[#3b82f6] to-[#7c3aed] bg-clip-text text-transparent hover:opacity-90 transition-opacity"
         >
-          RapidMVP.io
+          RapidMvᵖ.io
         </NavLink>
 
         {/* Desktop menu */}

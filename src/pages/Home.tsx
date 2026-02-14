@@ -26,7 +26,7 @@ export default function Home() {
   const { ref: heroRef, isVisible: heroVisible } = useIntersectionObserver({ triggerOnce: true })
 
   useEffect(() => {
-    document.title = 'RapidMVP.io – Build Your MVP in Weeks, Not Months'
+    document.title = 'RapidMvᵖ.io – Build Your MVP in Weeks, Not Months'
   }, [])
 
   return (
@@ -112,7 +112,7 @@ export default function Home() {
       </Section>
 
       {/* Value Props */}
-      <Section heading="Why RapidMVP?" animate>
+      <Section heading="Why RapidMvᵖ?" animate>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
           {[
             { title: '10x Faster', value: '10×', desc: 'Weeks not months', sub: 'Deploy before competitors even start' },

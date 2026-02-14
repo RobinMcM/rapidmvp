@@ -23,7 +23,7 @@ const values = [
 
 export default function ValueProposition() {
   return (
-    <Section heading="Why RapidMVP?" animate>
+    <Section heading="Why RapidMvᵖ?" animate>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
         {values.map((item) => (
           <div

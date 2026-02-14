@@ -12,7 +12,7 @@ export default function Process() {
   return (
     <Section
       id="process"
-      heading="The RapidMVP Methodology"
+      heading="The RapidMvᵖ Methodology"
       subheading="Planning Takes Days. Building Takes Hours."
       animate
     >

@@ -32,7 +32,7 @@ const pricingCards = [
 
 export default function Contact() {
   useEffect(() => {
-    document.title = 'Contact – RapidMVP.io'
+    document.title = 'Contact – RapidMvᵖ.io'
   }, [])
 
   return (

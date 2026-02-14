@@ -9,7 +9,7 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
         <div>
           <Link to="/" className="text-white font-semibold hover:opacity-90">
-            RapidMVP.io © 2026
+            RapidMvᵖ.io © 2026
           </Link>
           <p className="text-slate-500 text-sm">Rapid by Name, Rapid by Nature</p>
         </div>

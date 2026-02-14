@@ -13,13 +13,13 @@ const comparisonRows = [
 
 export default function Process() {
   useEffect(() => {
-    document.title = 'The RapidMVP Methodology – RapidMVP.io'
+    document.title = 'The RapidMvᵖ Methodology – RapidMvᵖ.io'
   }, [])
 
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <Section heading="The RapidMVP Methodology" subheading="30 Years of Discipline Meets AI Speed" animate>
+      <Section heading="The RapidMvᵖ Methodology" subheading="30 Years of Discipline Meets AI Speed" animate>
         <div className="max-w-3xl mx-auto text-center text-slate-400">
           <p className="text-lg">
             Planning takes days. Building takes hours. You get enterprise quality at startup speed.
@@ -40,7 +40,7 @@ export default function Process() {
           </div>
           <div className="p-6 rounded-xl bg-slate-900/60 border border-[#3b82f6]/30">
             <h3 className="text-lg font-bold text-[#3b82f6] mb-2">The Gap</h3>
-            <p className="text-slate-400 text-sm">You need both speed and quality. That’s RapidMVP.</p>
+            <p className="text-slate-400 text-sm">You need both speed and quality. That’s RapidMvᵖ.</p>
           </div>
         </div>
       </Section>
@@ -150,7 +150,7 @@ export default function Process() {
                 <th className="px-6 py-4 text-white font-semibold">Aspect</th>
                 <th className="px-6 py-4 text-slate-400 font-semibold">Traditional</th>
                 <th className="px-6 py-4 text-slate-400 font-semibold">AI-Only Platforms</th>
-                <th className="px-6 py-4 text-[#3b82f6] font-semibold">RapidMVP</th>
+                <th className="px-6 py-4 text-[#3b82f6] font-semibold">RapidMvᵖ</th>
               </tr>
             </thead>
             <tbody>

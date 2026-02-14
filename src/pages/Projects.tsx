@@ -119,7 +119,7 @@ export default function Projects() {
   const [filter, setFilter] = useState<ProjectCategory>('All')
 
   useEffect(() => {
-    document.title = 'Our Work – RapidMVP.io'
+    document.title = 'Our Work – RapidMvᵖ.io'
   }, [])
 
   const filtered = useMemo(

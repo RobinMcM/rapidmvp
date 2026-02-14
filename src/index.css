@@ -1,15 +1,6 @@
-@import "tailwindcss";
-
-/* Custom theme for RapidMVP.io */
-@theme {
-  --color-rapid-dark: #0a0a0f;
-  --color-rapid-dark-2: #1a1a2e;
-  --color-rapid-blue: #2563eb;
-  --color-rapid-purple: #7c3aed;
-  --color-rapid-accent: #3b82f6;
-  --color-rapid-orange: #f97316;
-  --font-sans: "Inter", system-ui, sans-serif;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   html {
@@ -20,7 +11,7 @@
     margin: 0;
     min-width: 320px;
     min-height: 100vh;
-    font-family: var(--font-sans);
+    font-family: Inter, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     @apply bg-gradient-to-b from-[#0a0a0f] to-[#1a1a2e] text-white;

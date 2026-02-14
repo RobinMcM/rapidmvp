@@ -13,7 +13,8 @@ interface UseIntersectionObserverOptions {
 export function useIntersectionObserver(options: UseIntersectionObserverOptions = {}) {
   const { threshold = 0.1, rootMargin = '0px 0px -50px 0px', triggerOnce = true } = options
   const ref = useRef<HTMLDivElement>(null)
-  const [isVisible, setIsVisible] = useState(false)
+  // Start visible so the page never appears blank if the observer is slow or doesn't fire
+  const [isVisible, setIsVisible] = useState(true)
 
   useEffect(() => {
     const el = ref.current
