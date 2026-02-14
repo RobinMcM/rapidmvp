@@ -1,10 +1,12 @@
 import { type ButtonHTMLAttributes, type ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary'
   children: ReactNode
   className?: string
   href?: string
+  to?: string
   onClick?: () => void
 }
 
@@ -13,6 +15,7 @@ export default function Button({
   children,
   className = '',
   href,
+  to,
   onClick,
   ...props
 }: ButtonProps) {
@@ -28,14 +31,12 @@ export default function Button({
 
   const combined = `${base} ${variants[variant]} ${className}`.trim()
 
-  if (href) {
-    return (
-      <a href={href} className={combined}>
-        {children}
-      </a>
-    )
+  if (to) {
+    return <Link to={to} className={combined}>{children}</Link>
   }
-
+  if (href) {
+    return <a href={href} className={combined}>{children}</a>
+  }
   return (
     <button type="button" className={combined} onClick={onClick} {...props}>
       {children}

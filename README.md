@@ -71,3 +71,25 @@ export default defineConfig([
   },
 ])
 ```
+
+## Deployment (RapidMVP.io)
+
+This is a **static site** (Vite build outputs to `dist/`). You can deploy it in two ways:
+
+### Option A: Static Site (recommended — no server, no port errors)
+
+On [Render](https://render.com), [Netlify](https://netlify.com), or similar:
+
+1. Create a **Static Site** (not a Web Service).
+2. **Build command:** `npm run build`
+3. **Publish directory:** `dist`
+4. No start command, no Procfile, no server. The platform serves the files; no "missing start command" or port binding issues.
+
+### Option B: Web Service (when only a "Web Service" type is available)
+
+If the platform requires a running process:
+
+- **Build command:** `npm run build`
+- **Start command:** `npm start` (or rely on the Procfile: `web: npm start`)
+
+The start script runs a small server that serves `dist/` and binds to `PORT` (default 8080), so health checks pass.
