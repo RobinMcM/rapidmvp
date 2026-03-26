@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 const EMAIL = 'mailto:robin@rapidmvp.io'
-const LINKEDIN_URL = 'https://www.linkedin.com/in/robinmcmanus/'
+const LINKEDIN_URL = 'https://www.linkedin.com/in/robin-mcmanus-18778123/'
 
 export default function Footer() {
   return (

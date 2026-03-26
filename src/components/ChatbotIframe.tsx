@@ -1,0 +1,87 @@
+'use client'
+
+import { useMemo, useState } from 'react'
+
+function ChatIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+const DEFAULT_WIDTH = 380
+const DEFAULT_HEIGHT = 560
+
+export default function ChatbotIframe() {
+  const src = process.env.NEXT_PUBLIC_CHATBOT_IFRAME_SRC?.trim()
+  const title = process.env.NEXT_PUBLIC_CHATBOT_IFRAME_TITLE?.trim() || 'Chatbot assistant'
+  const initialOpen = process.env.NEXT_PUBLIC_CHATBOT_IFRAME_INITIAL_OPEN === 'true'
+
+  const width = useMemo(() => {
+    const parsed = Number(process.env.NEXT_PUBLIC_CHATBOT_IFRAME_WIDTH)
+    return Number.isFinite(parsed) && parsed >= 320 && parsed <= 1200 ? parsed : DEFAULT_WIDTH
+  }, [])
+
+  const height = useMemo(() => {
+    const parsed = Number(process.env.NEXT_PUBLIC_CHATBOT_IFRAME_HEIGHT)
+    return Number.isFinite(parsed) && parsed >= 360 && parsed <= 1200 ? parsed : DEFAULT_HEIGHT
+  }, [])
+
+  const [open, setOpen] = useState(initialOpen)
+  const [loaded, setLoaded] = useState(false)
+
+  if (!src) return null
+
+  return (
+    <div className="fixed bottom-5 right-5 z-[9999] flex flex-col items-end gap-2">
+      {!open ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label="Open chatbot"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition hover:scale-105 hover:bg-blue-500"
+        >
+          <ChatIcon />
+        </button>
+      ) : (
+        <div
+          className="overflow-hidden rounded-2xl border border-white/10 bg-slate-950 shadow-2xl"
+          style={{ width: `${width}px`, height: `${height}px`, maxWidth: 'calc(100vw - 1.5rem)', maxHeight: 'calc(100vh - 5rem)' }}
+        >
+          <div className="flex h-10 items-center justify-between border-b border-white/10 px-3 text-xs text-white/70">
+            <span>{title}</span>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Close chatbot"
+              className="rounded px-2 py-1 text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+              Close
+            </button>
+          </div>
+          {!loaded && (
+            <div className="absolute m-3 rounded bg-black/50 px-2 py-1 text-xs text-white/80">
+              Loading chat...
+            </div>
+          )}
+          <iframe
+            src={src}
+            title={title}
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+            className="h-[calc(100%-2.5rem)] w-full border-0 bg-white"
+            onLoad={() => setLoaded(true)}
+          />
+        </div>
+      )}
+    </div>
+  )
+}

@@ -13,6 +13,21 @@ Next.js App Router + TypeScript + Tailwind landing site with first-stage authent
    - `npm run build`
    - `npm run start`
 
+## Chatbot iframe quick win
+
+`rapidmvp-v2` can render the standalone chatbot as a floating iframe control (SharePoint-compatible approach).
+
+1. Set these vars in `.env.local`:
+   - `NEXT_PUBLIC_CHATBOT_IFRAME_SRC` (example: `https://chat.yourdomain.com/chatbot/embed/insolvency`)
+   - `NEXT_PUBLIC_CHATBOT_IFRAME_TITLE` (optional)
+   - `NEXT_PUBLIC_CHATBOT_IFRAME_WIDTH` (optional, default `380`)
+   - `NEXT_PUBLIC_CHATBOT_IFRAME_HEIGHT` (optional, default `560`)
+   - `NEXT_PUBLIC_CHATBOT_IFRAME_INITIAL_OPEN` (optional, `true` or `false`)
+2. Restart `npm run dev`.
+3. Open any page in the app and use the chat button in the bottom-right corner.
+
+If `NEXT_PUBLIC_CHATBOT_IFRAME_SRC` is empty, the iframe control is hidden.
+
 ## Auth Architecture (MVP)
 
 - Frontend: `rapidmvp.io`
@@ -54,6 +69,7 @@ See `.env.example` for all required values:
 - `NEXT_PUBLIC_AUTH_API_URL` (optional auth API override)
 - `NEXT_PUBLIC_WEBSITE_DOMAIN`
 - `NEXT_PUBLIC_AUTH_API_BASE_PATH` (same meaning as `AUTH_API_BASE_PATH`)
+- `NEXT_PUBLIC_CHATBOT_IFRAME_SRC` (standalone chatbot URL for iframe embed)
 
 Recommended MovieShaker frontend env setup:
 

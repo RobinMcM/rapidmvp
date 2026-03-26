@@ -3,6 +3,7 @@ import '../index.css'
 import AuthProvider from '../components/AuthProvider'
 import Navigation from '../components/Navigation'
 import Footer from '../components/Footer'
+import ChatbotIframe from '../components/ChatbotIframe'
 
 export const metadata: Metadata = {
   title: 'RapidMvᵖ.io – Build Your MVP in Weeks, Not Months',
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Navigation />
             <main>{children}</main>
             <Footer />
+            <ChatbotIframe />
           </div>
         </AuthProvider>
       </body>
