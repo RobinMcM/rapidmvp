@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 function ChatIcon() {
   return (
@@ -20,9 +20,14 @@ const DEFAULT_WIDTH = 380
 const DEFAULT_HEIGHT = 560
 
 export default function ChatbotIframe() {
+  const widgetScriptSrc = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_SRC?.trim()
+  const widgetApiBase = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_API_BASE?.trim()
+  const widgetModeId = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_MODE_ID?.trim() || 'insolvency'
+  const widgetEmbedded = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_EMBEDDED !== 'false'
   const src = process.env.NEXT_PUBLIC_CHATBOT_IFRAME_SRC?.trim()
   const title = process.env.NEXT_PUBLIC_CHATBOT_IFRAME_TITLE?.trim() || 'Chatbot assistant'
   const initialOpen = process.env.NEXT_PUBLIC_CHATBOT_IFRAME_INITIAL_OPEN === 'true'
+  const widgetHostRef = useRef<HTMLDivElement | null>(null)
 
   const width = useMemo(() => {
     const parsed = Number(process.env.NEXT_PUBLIC_CHATBOT_IFRAME_WIDTH)
@@ -36,6 +41,52 @@ export default function ChatbotIframe() {
 
   const [open, setOpen] = useState(initialOpen)
   const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    if (!widgetScriptSrc || !widgetHostRef.current) return
+
+    let cancelled = false
+    const scriptId = 'usageflows-chatbot-widget-script'
+
+    const mountWidget = () => {
+      if (cancelled || !widgetHostRef.current) return
+      widgetHostRef.current.innerHTML = ''
+      const widgetEl = document.createElement('usageflows-chatbot')
+      widgetEl.setAttribute('mode-id', widgetModeId)
+      if (widgetApiBase) widgetEl.setAttribute('api-base', widgetApiBase)
+      widgetEl.setAttribute('embedded', String(widgetEmbedded))
+      widgetHostRef.current.appendChild(widgetEl)
+    }
+
+    const existing = document.getElementById(scriptId) as HTMLScriptElement | null
+    if (existing?.dataset.loaded === 'true') {
+      mountWidget()
+      return () => {
+        cancelled = true
+      }
+    }
+
+    const script = existing ?? document.createElement('script')
+    script.id = scriptId
+    script.src = widgetScriptSrc
+    script.async = true
+    script.onload = () => {
+      script.dataset.loaded = 'true'
+      mountWidget()
+    }
+    script.onerror = () => {
+      script.dataset.loaded = 'error'
+    }
+    if (!existing) document.body.appendChild(script)
+
+    return () => {
+      cancelled = true
+    }
+  }, [widgetApiBase, widgetEmbedded, widgetModeId, widgetScriptSrc])
+
+  if (widgetScriptSrc) {
+    return <div ref={widgetHostRef} />
+  }
 
   if (!src) return null
 

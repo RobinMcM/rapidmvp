@@ -28,6 +28,19 @@ Next.js App Router + TypeScript + Tailwind landing site with first-stage authent
 
 If `NEXT_PUBLIC_CHATBOT_IFRAME_SRC` is empty, the iframe control is hidden.
 
+## Chatbot widget (non-iframe, preferred)
+
+`rapidmvp-v2` can load the reusable chatbot web component script and render it directly (no iframe).
+
+Set these vars in `.env.local`:
+
+- `NEXT_PUBLIC_CHATBOT_WIDGET_SRC` (example: `https://taxflow.uk/chatbot-widget/usageflows-chatbot.js`)
+- `NEXT_PUBLIC_CHATBOT_WIDGET_API_BASE` (example: `https://taxflow.uk`)
+- `NEXT_PUBLIC_CHATBOT_WIDGET_MODE_ID` (example: `insolvency`)
+- `NEXT_PUBLIC_CHATBOT_WIDGET_EMBEDDED` (`true` for direct panel rendering)
+
+When `NEXT_PUBLIC_CHATBOT_WIDGET_SRC` is set, widget mode is used and iframe mode is skipped automatically.
+
 ## Auth Architecture (MVP)
 
 - Frontend: `rapidmvp.io`
@@ -70,6 +83,10 @@ See `.env.example` for all required values:
 - `NEXT_PUBLIC_WEBSITE_DOMAIN`
 - `NEXT_PUBLIC_AUTH_API_BASE_PATH` (same meaning as `AUTH_API_BASE_PATH`)
 - `NEXT_PUBLIC_CHATBOT_IFRAME_SRC` (standalone chatbot URL for iframe embed)
+- `NEXT_PUBLIC_CHATBOT_WIDGET_SRC` (chatbot widget script URL)
+- `NEXT_PUBLIC_CHATBOT_WIDGET_API_BASE` (chatbot API origin for widget calls)
+- `NEXT_PUBLIC_CHATBOT_WIDGET_MODE_ID` (default chatbot mode for widget)
+- `NEXT_PUBLIC_CHATBOT_WIDGET_EMBEDDED` (render style for widget)
 
 Recommended MovieShaker frontend env setup:
 
