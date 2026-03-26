@@ -1,0 +1,90 @@
+# Global centralized auth routing standard
+# Identity domain: https://auth.rapidmvp.io
+# SuperTokens Core must satisfy: GET <SUPERTOKENS_CONNECTION_URI>/apiversion -> 200
+
+auth.rapidmvp.io {
+  # Health endpoint passthrough
+  @health path /health
+  handle @health {
+    reverse_proxy http://rapidmvp-auth-service:3000 {
+      rewrite /api/auth/health
+    }
+  }
+
+  # Auth APIs exposed as /auth/*
+  @auth path /auth /auth/*
+  handle @auth {
+    reverse_proxy http://rapidmvp-auth-service:3000 {
+      rewrite /api{uri}
+    }
+  }
+
+  handle {
+    respond "auth.rapidmvp.io ready" 200
+  }
+}
+
+api.movieshaker.com {
+  @auth path /auth /auth/*
+  handle @auth {
+    reverse_proxy https://auth.rapidmvp.io {
+      header_up Host auth.rapidmvp.io
+    }
+  }
+
+  handle {
+    reverse_proxy http://movieshaker-engine:8080
+  }
+}
+
+api.rapidmvp.io {
+  @auth path /auth /auth/*
+  handle @auth {
+    reverse_proxy https://auth.rapidmvp.io {
+      header_up Host auth.rapidmvp.io
+    }
+  }
+
+  handle {
+    reverse_proxy http://rapidmvp-backend:8080
+  }
+}
+
+api.afilminabox.com {
+  @auth path /auth /auth/*
+  handle @auth {
+    reverse_proxy https://auth.rapidmvp.io {
+      header_up Host auth.rapidmvp.io
+    }
+  }
+
+  handle {
+    reverse_proxy http://afilminabox-backend:8080
+  }
+}
+
+api.reelinvesting.com {
+  @auth path /auth /auth/*
+  handle @auth {
+    reverse_proxy https://auth.rapidmvp.io {
+      header_up Host auth.rapidmvp.io
+    }
+  }
+
+  handle {
+    reverse_proxy http://reelinvesting-backend:8080
+  }
+}
+
+api.ooocreatives.com {
+  @auth path /auth /auth/*
+  handle @auth {
+    reverse_proxy https://auth.rapidmvp.io {
+      header_up Host auth.rapidmvp.io
+    }
+  }
+
+  handle {
+    reverse_proxy http://ooocreatives-backend:8080
+  }
+}

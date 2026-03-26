@@ -1,0 +1,42 @@
+# Centralized auth with MovieShaker CRUD separation.
+# - Auth service: auth.rapidmvp.io
+# - CRUD API: api.movieshaker.com
+# - First-party auth path for MovieShaker frontend:
+#     api.movieshaker.com/auth/* -> auth.rapidmvp.io/auth/*
+
+api.movieshaker.com {
+  @auth path /auth /auth/*
+  handle @auth {
+    reverse_proxy https://auth.rapidmvp.io {
+      header_up Host auth.rapidmvp.io
+    }
+  }
+
+  # All non-auth API routes stay on MovieShaker engine.
+  handle {
+    reverse_proxy http://movieshaker-engine:8080
+  }
+}
+
+auth.rapidmvp.io {
+  # Public health for uptime checks.
+  @health path /health
+  handle @health {
+    reverse_proxy http://rapidmvp-next:3000 {
+      rewrite /api/auth/health
+    }
+  }
+
+  # SuperTokens API mounted under /auth on auth domain.
+  @auth path /auth /auth/*
+  handle @auth {
+    reverse_proxy http://rapidmvp-next:3000 {
+      rewrite /api{uri}
+    }
+  }
+
+  # Optional fallback for root.
+  handle {
+    respond "auth gateway ready" 200
+  }
+}

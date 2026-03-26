@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  supertokens-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: supertokens
+      POSTGRES_USER: supertokens
+      POSTGRES_PASSWORD: supertokens
+    ports:
+      - '5433:5432'
+    volumes:
+      - supertokens-db-data:/var/lib/postgresql/data
+
+  supertokens-core:
+    image: supertokens/supertokens-postgresql:10.1
+    restart: unless-stopped
+    depends_on:
+      - supertokens-db
+    environment:
+      POSTGRESQL_CONNECTION_URI: 'postgresql://supertokens:supertokens@supertokens-db:5432/supertokens'
+    ports:
+      - '3567:3567'
+
+volumes:
+  supertokens-db-data:
