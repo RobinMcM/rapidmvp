@@ -41,25 +41,30 @@ export default function ChatbotIframe() {
 
   const [open, setOpen] = useState(initialOpen)
   const [loaded, setLoaded] = useState(false)
+  const [widgetReady, setWidgetReady] = useState(false)
 
   useEffect(() => {
-    if (!widgetScriptSrc || !widgetHostRef.current) return
+    if (!widgetScriptSrc) return
 
     let cancelled = false
     const scriptId = 'usageflows-chatbot-widget-script'
 
     const mountWidget = () => {
-      if (cancelled || !widgetHostRef.current) return
+      if (cancelled || !open || !widgetHostRef.current) return
       widgetHostRef.current.innerHTML = ''
       const widgetEl = document.createElement('usageflows-chatbot')
       widgetEl.setAttribute('mode-id', widgetModeId)
       if (widgetApiBase) widgetEl.setAttribute('api-base', widgetApiBase)
       widgetEl.setAttribute('embedded', String(widgetEmbedded))
+      widgetEl.style.display = 'block'
+      widgetEl.style.width = '100%'
+      widgetEl.style.height = '100%'
       widgetHostRef.current.appendChild(widgetEl)
     }
 
     const existing = document.getElementById(scriptId) as HTMLScriptElement | null
     if (existing?.dataset.loaded === 'true') {
+      setWidgetReady(true)
       mountWidget()
       return () => {
         cancelled = true
@@ -72,20 +77,61 @@ export default function ChatbotIframe() {
     script.async = true
     script.onload = () => {
       script.dataset.loaded = 'true'
+      setWidgetReady(true)
       mountWidget()
     }
     script.onerror = () => {
       script.dataset.loaded = 'error'
+      setWidgetReady(false)
     }
     if (!existing) document.body.appendChild(script)
 
     return () => {
       cancelled = true
     }
-  }, [widgetApiBase, widgetEmbedded, widgetModeId, widgetScriptSrc])
+  }, [open, widgetApiBase, widgetEmbedded, widgetModeId, widgetScriptSrc])
 
   if (widgetScriptSrc) {
-    return <div ref={widgetHostRef} />
+    return (
+      <div className="fixed bottom-5 right-5 z-[9999] flex flex-col items-end gap-2">
+        {!open ? (
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label="Open chatbot"
+            className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition hover:scale-105 hover:bg-blue-500"
+          >
+            <ChatIcon />
+          </button>
+        ) : (
+          <div
+            className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950 shadow-2xl"
+            style={{ width: `${width}px`, height: `${height}px`, maxWidth: 'calc(100vw - 1.5rem)', maxHeight: 'calc(100vh - 5rem)' }}
+          >
+            <div className="flex h-10 items-center justify-between border-b border-white/10 px-3 text-xs text-white/70">
+              <span>{title}</span>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Close chatbot"
+                className="rounded px-2 py-1 text-white/80 transition hover:bg-white/10 hover:text-white"
+              >
+                Close
+              </button>
+            </div>
+            {!widgetReady && (
+              <div className="absolute m-3 rounded bg-black/50 px-2 py-1 text-xs text-white/80">
+                Loading chat...
+              </div>
+            )}
+            <div
+              ref={widgetHostRef}
+              style={{ width: '100%', height: 'calc(100% - 2.5rem)' }}
+            />
+          </div>
+        )}
+      </div>
+    )
   }
 
   if (!src) return null
