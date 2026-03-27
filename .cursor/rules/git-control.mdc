@@ -1,0 +1,13 @@
+---
+description: Keep git operations manual and user-approved
+alwaysApply: true
+---
+
+# Git Control Rule
+
+- Do not run git commands unless the user explicitly asks in this chat.
+- Never run `git push` unless the user explicitly asks for push right now.
+- Never auto-commit after code changes.
+- After edits, stop and ask the user whether they want to handle git in Cursor UI.
+- If user asks for git status/diff information, report findings without pushing.
+- Do not run destructive git commands (`reset --hard`, force push, checkout discard) unless explicitly requested.
