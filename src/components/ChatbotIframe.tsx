@@ -18,12 +18,14 @@ function ChatIcon() {
 
 const DEFAULT_WIDTH = 380
 const DEFAULT_HEIGHT = 560
+const DEFAULT_WIDGET_EMBED_SRC = 'https://taxflow.uk/chatbot/embed?rule=insolvency&model=openai/gpt-5-pro&bg=%23B5A469'
+const DEFAULT_WIDGET_SCRIPT_SRC = 'https://taxflow.uk/chatbot-widget/usageflows-chatbot.js'
 
 export default function ChatbotIframe() {
-  const widgetScriptSrc = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_SRC?.trim()
+  const configuredWidgetScriptSrc = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_SRC?.trim()
   const widgetApiBase = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_API_BASE?.trim()
   const widgetModeId = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_MODE_ID?.trim() || 'insolvency'
-  const widgetEmbedSrc = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC?.trim()
+  const widgetEmbedSrc = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC?.trim() || DEFAULT_WIDGET_EMBED_SRC
   const widgetModel = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_MODEL?.trim()
   const widgetBgColor = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_BG_COLOR?.trim()
   const widgetContactUrl = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_CONTACT_URL?.trim()
@@ -48,6 +50,17 @@ export default function ChatbotIframe() {
   const [open, setOpen] = useState(initialOpen)
   const [loaded, setLoaded] = useState(false)
   const [widgetReady, setWidgetReady] = useState(false)
+
+  const widgetScriptSrc = useMemo(() => {
+    if (configuredWidgetScriptSrc) return configuredWidgetScriptSrc
+    if (!widgetEmbedSrc) return ''
+    try {
+      const embedUrl = new URL(widgetEmbedSrc)
+      return `${embedUrl.origin}/chatbot-widget/usageflows-chatbot.js`
+    } catch {
+      return DEFAULT_WIDGET_SCRIPT_SRC
+    }
+  }, [configuredWidgetScriptSrc, widgetEmbedSrc])
 
   useEffect(() => {
     if (!widgetScriptSrc) return

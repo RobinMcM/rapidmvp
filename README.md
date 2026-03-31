@@ -34,15 +34,15 @@ If `NEXT_PUBLIC_CHATBOT_IFRAME_SRC` is empty, the iframe control is hidden.
 
 Set these vars in `.env.local`:
 
-- `NEXT_PUBLIC_CHATBOT_WIDGET_SRC` (example: `https://taxflow.uk/chatbot-widget/usageflows-chatbot.js`)
-- `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC` (single URL with all settings, e.g. `https://taxflow.uk/chatbot/embed?rule=insolvency&model=openai/gpt-5-pro&bg=%23f8fafc`)
+- `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC` (single URL with all settings, e.g. `https://taxflow.uk/chatbot/embed?rule=insolvency&model=openai/gpt-5-pro&bg=%23f8fafc`) **required**
+- `NEXT_PUBLIC_CHATBOT_WIDGET_SRC` (optional; auto-derived from `EMBED_SRC` origin if omitted)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_CONTACT_URL` (optional contact page URL for CTA handoff)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_CONTACT_TARGET_ORIGIN` (optional exact target origin used for secure postMessage)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_ALLOWED_PARENT_ORIGINS` (optional comma-separated parent-origin allowlist)
 
-When `NEXT_PUBLIC_CHATBOT_WIDGET_SRC` is set, widget mode is used and iframe mode is skipped automatically.
+When `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC` is set, widget mode is used and iframe mode is skipped automatically.
 Widget mode is fixed to a single floating control to avoid double-wrapper behavior.
-To keep settings encapsulated in one host-page URL, prefer `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC`.
+To keep settings encapsulated in one host-page URL, use `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC` as the single source of truth.
 
 ## Auth Architecture (MVP)
 
@@ -86,8 +86,8 @@ See `.env.example` for all required values:
 - `NEXT_PUBLIC_WEBSITE_DOMAIN`
 - `NEXT_PUBLIC_AUTH_API_BASE_PATH` (same meaning as `AUTH_API_BASE_PATH`)
 - `NEXT_PUBLIC_CHATBOT_IFRAME_SRC` (standalone chatbot URL for iframe embed)
-- `NEXT_PUBLIC_CHATBOT_WIDGET_SRC` (chatbot widget script URL)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC` (full embed URL, including `rule`, `model`, and `bg` query params)
+- `NEXT_PUBLIC_CHATBOT_WIDGET_SRC` (optional chatbot widget script URL; auto-derived from embed origin when omitted)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_CONTACT_URL` (optional cross-origin contact page for CTA redirect)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_CONTACT_TARGET_ORIGIN` (optional secure postMessage target origin)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_ALLOWED_PARENT_ORIGINS` (optional parent origin allowlist for CTA handoff)
