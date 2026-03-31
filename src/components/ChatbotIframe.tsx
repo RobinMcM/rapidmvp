@@ -30,6 +30,7 @@ export default function ChatbotIframe() {
   const title = process.env.NEXT_PUBLIC_CHATBOT_IFRAME_TITLE?.trim() || 'Chatbot assistant'
   const initialOpen = process.env.NEXT_PUBLIC_CHATBOT_IFRAME_INITIAL_OPEN === 'true'
   const widgetHostRef = useRef<HTMLDivElement | null>(null)
+  const widgetMountRef = useRef<HTMLDivElement | null>(null)
 
   const width = useMemo(() => {
     const parsed = Number(process.env.NEXT_PUBLIC_CHATBOT_IFRAME_WIDTH)
@@ -52,8 +53,8 @@ export default function ChatbotIframe() {
     const scriptId = 'usageflows-chatbot-widget-script'
 
     const mountWidget = () => {
-      if (cancelled || !widgetHostRef.current) return
-      widgetHostRef.current.innerHTML = ''
+      if (cancelled || !widgetMountRef.current) return
+      widgetMountRef.current.innerHTML = ''
       const widgetEl = document.createElement('usageflows-chatbot')
       widgetEl.setAttribute('mode-id', widgetModeId)
       if (widgetApiBase) widgetEl.setAttribute('api-base', widgetApiBase)
@@ -64,7 +65,7 @@ export default function ChatbotIframe() {
       widgetEl.style.display = 'block'
       widgetEl.style.width = '100%'
       widgetEl.style.height = '100%'
-      widgetHostRef.current.appendChild(widgetEl)
+      widgetMountRef.current.appendChild(widgetEl)
     }
 
     const existing = document.getElementById(scriptId) as HTMLScriptElement | null
@@ -93,12 +94,14 @@ export default function ChatbotIframe() {
 
     return () => {
       cancelled = true
+      if (widgetMountRef.current) widgetMountRef.current.innerHTML = ''
     }
   }, [widgetApiBase, widgetEmbedSrc, widgetModeId, widgetModel, widgetBgColor, widgetScriptSrc])
 
   if (widgetScriptSrc) {
     return (
       <div ref={widgetHostRef}>
+        <div ref={widgetMountRef} />
         {!widgetReady && (
           <span className="fixed bottom-5 right-5 z-[9999] rounded bg-black/50 px-2 py-1 text-xs text-white/80">Loading chat...</span>
         )}
