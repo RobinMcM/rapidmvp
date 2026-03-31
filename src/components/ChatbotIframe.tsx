@@ -24,6 +24,9 @@ export default function ChatbotIframe() {
   const widgetApiBase = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_API_BASE?.trim()
   const widgetModeId = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_MODE_ID?.trim() || 'insolvency'
   const widgetEmbedded = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_EMBEDDED !== 'false'
+  const widgetEmbedSrc = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC?.trim()
+  const widgetModel = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_MODEL?.trim()
+  const widgetBgColor = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_BG_COLOR?.trim()
   const src = process.env.NEXT_PUBLIC_CHATBOT_IFRAME_SRC?.trim()
   const title = process.env.NEXT_PUBLIC_CHATBOT_IFRAME_TITLE?.trim() || 'Chatbot assistant'
   const initialOpen = process.env.NEXT_PUBLIC_CHATBOT_IFRAME_INITIAL_OPEN === 'true'
@@ -55,6 +58,9 @@ export default function ChatbotIframe() {
       const widgetEl = document.createElement('usageflows-chatbot')
       widgetEl.setAttribute('mode-id', widgetModeId)
       if (widgetApiBase) widgetEl.setAttribute('api-base', widgetApiBase)
+      if (widgetEmbedSrc) widgetEl.setAttribute('embed-src', widgetEmbedSrc)
+      if (widgetModel) widgetEl.setAttribute('model', widgetModel)
+      if (widgetBgColor) widgetEl.setAttribute('bg-color', widgetBgColor)
       widgetEl.setAttribute('embedded', String(widgetEmbedded))
       widgetEl.style.display = 'block'
       widgetEl.style.width = '100%'
@@ -89,7 +95,7 @@ export default function ChatbotIframe() {
     return () => {
       cancelled = true
     }
-  }, [open, widgetApiBase, widgetEmbedded, widgetModeId, widgetScriptSrc])
+  }, [open, widgetApiBase, widgetEmbedded, widgetEmbedSrc, widgetModeId, widgetModel, widgetBgColor, widgetScriptSrc])
 
   if (widgetScriptSrc) {
     return (
