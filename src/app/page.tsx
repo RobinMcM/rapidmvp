@@ -8,10 +8,10 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+      <ChatTranscriptBox />
       <SocialProof />
       <ValueProposition />
       <TechStack />
-      <ChatTranscriptBox />
     </>
   )
 }
