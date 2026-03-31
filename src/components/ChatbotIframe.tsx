@@ -174,7 +174,7 @@ export default function ChatbotIframe() {
             loading="lazy"
             referrerPolicy="strict-origin-when-cross-origin"
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-            className="h-[calc(100%-2.5rem)] w-full border-0 bg-white"
+            style={{ width: '100%', height: 'calc(100% - 2.5rem)', border: 0, background: '#fff' }}
             onLoad={() => setLoaded(true)}
           />
         </div>
