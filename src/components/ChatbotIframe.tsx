@@ -18,7 +18,7 @@ function ChatIcon() {
 
 const DEFAULT_WIDTH = 380
 const DEFAULT_HEIGHT = 560
-const DEFAULT_WIDGET_EMBED_SRC = 'https://taxflow.uk/chatbot/embed?rule=insolvency&model=openai/gpt-5.1-chat&bg=%23B5A469'
+const DEFAULT_WIDGET_EMBED_SRC = 'https://taxflow.uk/chatbot/embed?rule=insolvency&model=anthropic/claude-3.5-sonnet&bg=%23B5A469'
 const DEFAULT_WIDGET_SCRIPT_SRC = 'https://taxflow.uk/chatbot-widget/usageflows-chatbot.js'
 
 export default function ChatbotIframe() {
