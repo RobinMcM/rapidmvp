@@ -26,6 +26,9 @@ export default function ChatbotIframe() {
   const widgetEmbedSrc = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC?.trim()
   const widgetModel = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_MODEL?.trim()
   const widgetBgColor = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_BG_COLOR?.trim()
+  const widgetContactUrl = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_CONTACT_URL?.trim()
+  const widgetContactTargetOrigin = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_CONTACT_TARGET_ORIGIN?.trim()
+  const widgetAllowedParentOrigins = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_ALLOWED_PARENT_ORIGINS?.trim()
   const src = process.env.NEXT_PUBLIC_CHATBOT_IFRAME_SRC?.trim()
   const title = process.env.NEXT_PUBLIC_CHATBOT_IFRAME_TITLE?.trim() || 'Chatbot assistant'
   const initialOpen = process.env.NEXT_PUBLIC_CHATBOT_IFRAME_INITIAL_OPEN === 'true'
@@ -61,6 +64,9 @@ export default function ChatbotIframe() {
       if (widgetEmbedSrc) widgetEl.setAttribute('embed-src', widgetEmbedSrc)
       if (widgetModel) widgetEl.setAttribute('model', widgetModel)
       if (widgetBgColor) widgetEl.setAttribute('bg-color', widgetBgColor)
+      if (widgetContactUrl) widgetEl.setAttribute('contact-url', widgetContactUrl)
+      if (widgetContactTargetOrigin) widgetEl.setAttribute('contact-target-origin', widgetContactTargetOrigin)
+      if (widgetAllowedParentOrigins) widgetEl.setAttribute('allowed-parent-origins', widgetAllowedParentOrigins)
       widgetEl.setAttribute('embedded', 'false')
       widgetEl.style.display = 'block'
       widgetEl.style.width = '100%'
@@ -96,7 +102,7 @@ export default function ChatbotIframe() {
       cancelled = true
       if (widgetMountRef.current) widgetMountRef.current.innerHTML = ''
     }
-  }, [widgetApiBase, widgetEmbedSrc, widgetModeId, widgetModel, widgetBgColor, widgetScriptSrc])
+  }, [widgetApiBase, widgetEmbedSrc, widgetModeId, widgetModel, widgetBgColor, widgetContactUrl, widgetContactTargetOrigin, widgetAllowedParentOrigins, widgetScriptSrc])
 
   if (widgetScriptSrc) {
     return (

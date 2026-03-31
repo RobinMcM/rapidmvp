@@ -40,6 +40,9 @@ Set these vars in `.env.local`:
 - `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC` (optional single URL with query params, e.g. `https://taxflow.uk/chatbot/embed/insolvency?model=openai/gpt-5-pro&bg=%23f8fafc`)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_MODEL` (optional model override when using mode/api params)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_BG_COLOR` (optional background color override when using mode/api params)
+- `NEXT_PUBLIC_CHATBOT_WIDGET_CONTACT_URL` (optional contact page URL for CTA handoff)
+- `NEXT_PUBLIC_CHATBOT_WIDGET_CONTACT_TARGET_ORIGIN` (optional exact target origin used for secure postMessage)
+- `NEXT_PUBLIC_CHATBOT_WIDGET_ALLOWED_PARENT_ORIGINS` (optional comma-separated parent-origin allowlist)
 
 When `NEXT_PUBLIC_CHATBOT_WIDGET_SRC` is set, widget mode is used and iframe mode is skipped automatically.
 Widget mode is fixed to a single floating control to avoid double-wrapper behavior.
@@ -93,6 +96,9 @@ See `.env.example` for all required values:
 - `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC` (full embed URL, including model/settings query params)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_MODEL` (optional model setting for widget attribute mode)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_BG_COLOR` (optional panel background color for widget attribute mode)
+- `NEXT_PUBLIC_CHATBOT_WIDGET_CONTACT_URL` (optional cross-origin contact page for CTA redirect)
+- `NEXT_PUBLIC_CHATBOT_WIDGET_CONTACT_TARGET_ORIGIN` (optional secure postMessage target origin)
+- `NEXT_PUBLIC_CHATBOT_WIDGET_ALLOWED_PARENT_ORIGINS` (optional parent origin allowlist for CTA handoff)
 
 Recommended MovieShaker frontend env setup:
 
