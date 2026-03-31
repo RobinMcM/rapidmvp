@@ -2,7 +2,7 @@ import Button from './ui/Button'
 
 export default function Hero() {
   return (
-    <header className="relative min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 overflow-hidden">
+    <header className="relative min-h-[16vh] flex flex-col items-center justify-start pt-14 pb-8 px-4 sm:px-6 overflow-hidden">
       <div
         className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f] via-[#1a1a2e] to-[#0a0a0f]"
         aria-hidden
