@@ -18,7 +18,7 @@ function ChatIcon() {
 
 const DEFAULT_WIDTH = 380
 const DEFAULT_HEIGHT = 560
-const DEFAULT_WIDGET_EMBED_SRC = 'https://taxflow.uk/chatbot/embed?rule=insolvency&model=openai/gpt-5-pro&bg=%23B5A469'
+const DEFAULT_WIDGET_EMBED_SRC = 'https://taxflow.uk/chatbot/embed?rule=insolvency&model=meta-llama/llama-3-70b-instruct&bg=%23B5A469'
 const DEFAULT_WIDGET_SCRIPT_SRC = 'https://taxflow.uk/chatbot-widget/usageflows-chatbot.js'
 
 export default function ChatbotIframe() {
@@ -50,6 +50,7 @@ export default function ChatbotIframe() {
   const [open, setOpen] = useState(initialOpen)
   const [loaded, setLoaded] = useState(false)
   const [widgetReady, setWidgetReady] = useState(false)
+  const runtimeCacheBuster = useMemo(() => String(Date.now()), [])
 
   const widgetScriptSrc = useMemo(() => {
     if (configuredWidgetScriptSrc) return configuredWidgetScriptSrc
@@ -73,7 +74,14 @@ export default function ChatbotIframe() {
       widgetMountRef.current.innerHTML = ''
       const widgetEl = document.createElement('usageflows-chatbot')
       if (widgetEmbedSrc) {
-        widgetEl.setAttribute('embed-src', widgetEmbedSrc)
+        try {
+          const embedUrl = new URL(widgetEmbedSrc)
+          embedUrl.searchParams.set('cb', runtimeCacheBuster)
+          widgetEl.setAttribute('embed-src', embedUrl.toString())
+        } catch {
+          const sep = widgetEmbedSrc.includes('?') ? '&' : '?'
+          widgetEl.setAttribute('embed-src', `${widgetEmbedSrc}${sep}cb=${encodeURIComponent(runtimeCacheBuster)}`)
+        }
       } else {
         widgetEl.setAttribute('mode-id', widgetModeId)
         if (widgetApiBase) widgetEl.setAttribute('api-base', widgetApiBase)
@@ -101,7 +109,8 @@ export default function ChatbotIframe() {
 
     const script = existing ?? document.createElement('script')
     script.id = scriptId
-    script.src = widgetScriptSrc
+    const scriptSep = widgetScriptSrc.includes('?') ? '&' : '?'
+    script.src = `${widgetScriptSrc}${scriptSep}cb=${encodeURIComponent(runtimeCacheBuster)}`
     script.async = true
     script.onload = () => {
       script.dataset.loaded = 'true'
