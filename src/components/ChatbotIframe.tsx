@@ -23,7 +23,6 @@ export default function ChatbotIframe() {
   const widgetScriptSrc = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_SRC?.trim()
   const widgetApiBase = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_API_BASE?.trim()
   const widgetModeId = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_MODE_ID?.trim() || 'insolvency'
-  const widgetEmbedded = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_EMBEDDED !== 'false'
   const widgetEmbedSrc = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC?.trim()
   const widgetModel = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_MODEL?.trim()
   const widgetBgColor = process.env.NEXT_PUBLIC_CHATBOT_WIDGET_BG_COLOR?.trim()
@@ -53,7 +52,7 @@ export default function ChatbotIframe() {
     const scriptId = 'usageflows-chatbot-widget-script'
 
     const mountWidget = () => {
-      if (cancelled || !open || !widgetHostRef.current) return
+      if (cancelled || !widgetHostRef.current) return
       widgetHostRef.current.innerHTML = ''
       const widgetEl = document.createElement('usageflows-chatbot')
       widgetEl.setAttribute('mode-id', widgetModeId)
@@ -61,7 +60,7 @@ export default function ChatbotIframe() {
       if (widgetEmbedSrc) widgetEl.setAttribute('embed-src', widgetEmbedSrc)
       if (widgetModel) widgetEl.setAttribute('model', widgetModel)
       if (widgetBgColor) widgetEl.setAttribute('bg-color', widgetBgColor)
-      widgetEl.setAttribute('embedded', String(widgetEmbedded))
+      widgetEl.setAttribute('embedded', 'false')
       widgetEl.style.display = 'block'
       widgetEl.style.width = '100%'
       widgetEl.style.height = '100%'
@@ -95,46 +94,13 @@ export default function ChatbotIframe() {
     return () => {
       cancelled = true
     }
-  }, [open, widgetApiBase, widgetEmbedded, widgetEmbedSrc, widgetModeId, widgetModel, widgetBgColor, widgetScriptSrc])
+  }, [widgetApiBase, widgetEmbedSrc, widgetModeId, widgetModel, widgetBgColor, widgetScriptSrc])
 
   if (widgetScriptSrc) {
     return (
-      <div className="fixed bottom-5 right-5 z-[9999] flex flex-col items-end gap-2">
-        {!open ? (
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            aria-label="Open chatbot"
-            className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition hover:scale-105 hover:bg-blue-500"
-          >
-            <ChatIcon />
-          </button>
-        ) : (
-          <div
-            className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950 shadow-2xl"
-            style={{ width: `${width}px`, height: `${height}px`, maxWidth: 'calc(100vw - 1.5rem)', maxHeight: 'calc(100vh - 5rem)' }}
-          >
-            <div className="flex h-10 items-center justify-between border-b border-white/10 px-3 text-xs text-white/70">
-              <span>{title}</span>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                aria-label="Close chatbot"
-                className="rounded px-2 py-1 text-white/80 transition hover:bg-white/10 hover:text-white"
-              >
-                Close
-              </button>
-            </div>
-            {!widgetReady && (
-              <div className="absolute m-3 rounded bg-black/50 px-2 py-1 text-xs text-white/80">
-                Loading chat...
-              </div>
-            )}
-            <div
-              ref={widgetHostRef}
-              style={{ width: '100%', height: 'calc(100% - 2.5rem)' }}
-            />
-          </div>
+      <div ref={widgetHostRef}>
+        {!widgetReady && (
+          <span className="fixed bottom-5 right-5 z-[9999] rounded bg-black/50 px-2 py-1 text-xs text-white/80">Loading chat...</span>
         )}
       </div>
     )

@@ -37,13 +37,13 @@ Set these vars in `.env.local`:
 - `NEXT_PUBLIC_CHATBOT_WIDGET_SRC` (example: `https://taxflow.uk/chatbot-widget/usageflows-chatbot.js`)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_API_BASE` (example: `https://taxflow.uk`)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_MODE_ID` (example: `insolvency`)
-- `NEXT_PUBLIC_CHATBOT_WIDGET_EMBEDDED` (`true` for direct panel rendering)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC` (optional single URL with query params, e.g. `https://taxflow.uk/chatbot/embed/insolvency?model=openai/gpt-5-pro&bg=%23f8fafc`)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_MODEL` (optional model override when using mode/api params)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_BG_COLOR` (optional background color override when using mode/api params)
 
 When `NEXT_PUBLIC_CHATBOT_WIDGET_SRC` is set, widget mode is used and iframe mode is skipped automatically.
-To keep settings encapsulated in one host-page URL, prefer `NEXT_PUBLIC_CHATBOT_IFRAME_SRC` or `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC`.
+Widget mode is fixed to a single floating control to avoid double-wrapper behavior.
+To keep settings encapsulated in one host-page URL, prefer `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC`.
 
 ## Auth Architecture (MVP)
 
@@ -90,7 +90,6 @@ See `.env.example` for all required values:
 - `NEXT_PUBLIC_CHATBOT_WIDGET_SRC` (chatbot widget script URL)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_API_BASE` (chatbot API origin for widget calls)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_MODE_ID` (default chatbot mode for widget)
-- `NEXT_PUBLIC_CHATBOT_WIDGET_EMBEDDED` (render style for widget)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC` (full embed URL, including model/settings query params)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_MODEL` (optional model setting for widget attribute mode)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_BG_COLOR` (optional panel background color for widget attribute mode)
