@@ -59,11 +59,14 @@ export default function ChatbotIframe() {
       if (cancelled || !widgetMountRef.current) return
       widgetMountRef.current.innerHTML = ''
       const widgetEl = document.createElement('usageflows-chatbot')
-      widgetEl.setAttribute('mode-id', widgetModeId)
-      if (widgetApiBase) widgetEl.setAttribute('api-base', widgetApiBase)
-      if (widgetEmbedSrc) widgetEl.setAttribute('embed-src', widgetEmbedSrc)
-      if (widgetModel) widgetEl.setAttribute('model', widgetModel)
-      if (widgetBgColor) widgetEl.setAttribute('bg-color', widgetBgColor)
+      if (widgetEmbedSrc) {
+        widgetEl.setAttribute('embed-src', widgetEmbedSrc)
+      } else {
+        widgetEl.setAttribute('mode-id', widgetModeId)
+        if (widgetApiBase) widgetEl.setAttribute('api-base', widgetApiBase)
+        if (widgetModel) widgetEl.setAttribute('model', widgetModel)
+        if (widgetBgColor) widgetEl.setAttribute('bg-color', widgetBgColor)
+      }
       if (widgetContactUrl) widgetEl.setAttribute('contact-url', widgetContactUrl)
       if (widgetContactTargetOrigin) widgetEl.setAttribute('contact-target-origin', widgetContactTargetOrigin)
       if (widgetAllowedParentOrigins) widgetEl.setAttribute('allowed-parent-origins', widgetAllowedParentOrigins)
