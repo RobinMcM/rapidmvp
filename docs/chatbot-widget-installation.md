@@ -24,10 +24,10 @@ Keep responses concise and practical for film production teams.
 Add the widget script and custom element. Use `rules_source=hidden` to instruct chatbot API to use hidden rules text from the page bridge.
 
 ```html
-<script src="https://chatbot.openrouter.io/chatbot-widget/usageflows-chatbot.js" defer></script>
+<script src="https://chatbot.rapidmvp.io/chatbot-widget/usageflows-chatbot.js" defer></script>
 
 <usageflows-chatbot
-  embed-src="https://chatbot.openrouter.io/chatbot/embed?rule=insolvency&rules_source=hidden&model=openai/gpt-5-mini&bg=%23250411"
+  embed-src="https://chatbot.rapidmvp.io/chatbot/embed?rule=insolvency&rules_source=hidden&model=openai/gpt-5-mini&bg=%23250411"
   hidden-rules-field-id="chatbot-hidden-rules"
   result-field-id="chatbot-result"
   embedded="false"
@@ -72,9 +72,9 @@ Focus on production planning, scheduling, and practical next steps.
 <label for="chatbot-result">Latest chatbot result</label>
 <textarea id="chatbot-result" rows="8"></textarea>
 
-<script src="https://chatbot.openrouter.io/chatbot-widget/usageflows-chatbot.js" defer></script>
+<script src="https://chatbot.rapidmvp.io/chatbot-widget/usageflows-chatbot.js" defer></script>
 <usageflows-chatbot
-  embed-src="https://chatbot.openrouter.io/chatbot/embed?rule=insolvency&rules_source=hidden&model=openai/gpt-5-mini&bg=%23250411"
+  embed-src="https://chatbot.rapidmvp.io/chatbot/embed?rule=insolvency&rules_source=hidden&model=openai/gpt-5-mini&bg=%23250411"
   hidden-rules-field-id="chatbot-hidden-rules"
   result-field-id="chatbot-result"
   embedded="false"

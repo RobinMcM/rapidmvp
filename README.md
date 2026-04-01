@@ -34,7 +34,7 @@ If `NEXT_PUBLIC_CHATBOT_IFRAME_SRC` is empty, the iframe control is hidden.
 
 Set these vars in `.env.local`:
 
-- `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC` (single URL with all settings, e.g. `https://chatbot.openrouter.io/chatbot/embed?rule=insolvency&model=openai/gpt-5-mini&bg=%23250411`) **required**
+- `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC` (single URL with all settings, e.g. `https://chatbot.rapidmvp.io/chatbot/embed?rule=insolvency&model=openai/gpt-5-mini&bg=%23250411`) **required**
 - `NEXT_PUBLIC_CHATBOT_WIDGET_SRC` (optional; auto-derived from `EMBED_SRC` origin if omitted)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_CONTACT_URL` (optional contact page URL for CTA handoff)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_CONTACT_TARGET_ORIGIN` (optional exact target origin used for secure postMessage)

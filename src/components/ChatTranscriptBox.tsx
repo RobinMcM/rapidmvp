@@ -9,7 +9,7 @@ type ContactPayloadMessage = {
   transcript?: Array<{ role?: string; content?: string }>
 }
 
-const ALLOWED_ORIGINS = new Set(['https://chatbot.rapidmvp.io', 'https://chatbot.openrouter.io', 'http://localhost:3000'])
+const ALLOWED_ORIGINS = new Set(['https://chatbot.rapidmvp.io', 'http://localhost:3000'])
 
 function formatPayloadText(payload: ContactPayloadMessage): string {
   const summary = typeof payload.summary === 'string' ? payload.summary.trim() : ''
