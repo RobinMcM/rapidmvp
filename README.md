@@ -18,7 +18,7 @@ Next.js App Router + TypeScript + Tailwind landing site with first-stage authent
 `rapidmvp-v2` can render the standalone chatbot as a floating iframe control (SharePoint-compatible approach).
 
 1. Set these vars in `.env.local`:
-   - `NEXT_PUBLIC_CHATBOT_IFRAME_SRC` (example: `https://chat.yourdomain.com/chatbot/embed/insolvency?model=openai/gpt-5-pro`)
+   - `NEXT_PUBLIC_CHATBOT_IFRAME_SRC` (example: `https://chat.yourdomain.com/chatbot/embed/insolvency?model=openai/gpt-5-mini`)
    - `NEXT_PUBLIC_CHATBOT_IFRAME_TITLE` (optional)
    - `NEXT_PUBLIC_CHATBOT_IFRAME_WIDTH` (optional, default `380`)
    - `NEXT_PUBLIC_CHATBOT_IFRAME_HEIGHT` (optional, default `560`)
@@ -34,7 +34,7 @@ If `NEXT_PUBLIC_CHATBOT_IFRAME_SRC` is empty, the iframe control is hidden.
 
 Set these vars in `.env.local`:
 
-- `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC` (single URL with all settings, e.g. `https://chatbot.rapidmvp.io/chatbot/embed?rule=insolvency&model=openai/gpt-5-pro&bg=%23f8fafc`) **required**
+- `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC` (single URL with all settings, e.g. `https://chatbot.openrouter.io/chatbot/embed?rule=insolvency&model=openai/gpt-5-mini&bg=%23250411`) **required**
 - `NEXT_PUBLIC_CHATBOT_WIDGET_SRC` (optional; auto-derived from `EMBED_SRC` origin if omitted)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_CONTACT_URL` (optional contact page URL for CTA handoff)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_CONTACT_TARGET_ORIGIN` (optional exact target origin used for secure postMessage)
@@ -43,6 +43,9 @@ Set these vars in `.env.local`:
 When `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC` is set, widget mode is used and iframe mode is skipped automatically.
 Widget mode is fixed to a single floating control to avoid double-wrapper behavior.
 To keep settings encapsulated in one host-page URL, use `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC` as the single source of truth.
+
+Installation playbook for client websites (including hidden-rules + results-field pattern):
+- `docs/chatbot-widget-installation.md`
 
 ## Auth Architecture (MVP)
 
