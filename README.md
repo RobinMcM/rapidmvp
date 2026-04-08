@@ -88,6 +88,13 @@ See `.env.example` for all required values:
 - `NEXT_PUBLIC_AUTH_API_URL` (optional auth API override)
 - `NEXT_PUBLIC_WEBSITE_DOMAIN`
 - `NEXT_PUBLIC_AUTH_API_BASE_PATH` (same meaning as `AUTH_API_BASE_PATH`)
+- `DATABASE_URL` (PostgreSQL connection string for shared profile/role data)
+- `DO_SPACES_ENDPOINT` (e.g. `https://lon1.digitaloceanspaces.com`)
+- `DO_SPACES_REGION` (e.g. `lon1`)
+- `DO_SPACES_BUCKET` (e.g. `rapidmvp-general-storage`)
+- `DO_SPACES_PUBLIC_BASE_URL` (public base URL for uploaded assets)
+- `DO_SPACES_ACCESS_KEY_ID`
+- `DO_SPACES_SECRET_ACCESS_KEY`
 - `NEXT_PUBLIC_CHATBOT_IFRAME_SRC` (standalone chatbot URL for iframe embed)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_EMBED_SRC` (full embed URL, including `rule`, `model`, and `bg` query params)
 - `NEXT_PUBLIC_CHATBOT_WIDGET_SRC` (optional chatbot widget script URL; auto-derived from embed origin when omitted)
@@ -128,6 +135,17 @@ For all app domains (MovieShaker, RapidMVP, FilmInABox, ReelInvesting, OOOCreati
 - Auth UI entry page: `/auth`
 - Protected example page: `/account`
 - Health endpoint for monitoring auth API uptime: `/api/auth/health`
+
+## Shared Data API (Phase 2)
+
+The shared profile/role APIs are exposed under `/api/v1`:
+
+- `GET /api/v1/me` (session + site profile + role; provisions defaults on first login)
+- `PATCH /api/v1/me/profile`
+- `POST /api/v1/me/avatar/upload-url`
+- `GET /api/v1/admin/users` (admin role required for current site)
+- `PATCH /api/v1/admin/users/:userId/role`
+- `PATCH /api/v1/admin/users/:userId/status`
 
 ### Local auth troubleshooting
 
