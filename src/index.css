@@ -14,36 +14,141 @@
     font-family: Inter, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    @apply bg-gradient-to-b from-[#0a0a0f] to-[#1a1a2e] text-white;
+    background-color: #07080d;
+    color: #fff;
   }
 }
 
 @layer utilities {
+  /* Brand gradient text — Azure */
+  .text-gradient-azure {
+    background: linear-gradient(135deg, #0078d4 0%, #50b4f8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Brand gradient text — Azure → Cloudflare Orange */
+  .text-gradient-brand {
+    background: linear-gradient(135deg, #0078d4 0%, #2196f3 50%, #f48120 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Legacy purple gradient kept for Button.tsx until updated */
   .text-gradient {
-    @apply bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent;
+    background: linear-gradient(135deg, #0078d4 0%, #2196f3 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
-  .card-glow {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  /* Card hover glow — Azure */
+  .card-glow-azure {
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+    box-shadow: 0 0 0 1px rgba(0, 120, 212, 0.12);
+  }
+  .card-glow-azure:hover {
+    box-shadow: 0 0 0 1px rgba(0, 120, 212, 0.45), 0 8px 40px rgba(0, 120, 212, 0.15);
   }
 
+  /* Card hover glow — Orange */
+  .card-glow-orange {
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+    box-shadow: 0 0 0 1px rgba(244, 129, 32, 0.12);
+  }
+  .card-glow-orange:hover {
+    box-shadow: 0 0 0 1px rgba(244, 129, 32, 0.45), 0 8px 40px rgba(244, 129, 32, 0.12);
+  }
+
+  /* Subtle dot-grid background */
   .grid-pattern {
-    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-    background-size: 20px 20px;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
   }
-}
 
-/* Subtle floating animation for hero */
-@keyframes float {
-  0%,
-  100% {
+  /* Animated azure line grid for hero */
+  .grid-animated {
+    background-image:
+      linear-gradient(rgba(0, 120, 212, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 120, 212, 0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: grid-flow 24s linear infinite;
+  }
+
+  /* Radial glow orbs */
+  .glow-azure {
+    background: radial-gradient(ellipse at center, rgba(0, 120, 212, 0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .glow-orange {
+    background: radial-gradient(ellipse at center, rgba(244, 129, 32, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Horizontal divider line */
+  .divider-azure {
+    background: linear-gradient(90deg, transparent 0%, rgba(0, 120, 212, 0.4) 50%, transparent 100%);
+    height: 1px;
+    border: none;
+  }
+
+  /* Monospace technical label */
+  .label-mono {
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Section fade-up on scroll (JS-driven) */
+  .section-hidden {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .section-visible {
+    opacity: 1;
     transform: translateY(0);
   }
-  50% {
-    transform: translateY(-8px);
-  }
 }
 
+/* ─── Chat message animation ─── */
+@keyframes message-appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.message-appear {
+  animation: message-appear 0.35s ease-out forwards;
+}
+
+/* ─── Typing indicator dots ─── */
+@keyframes typing-dot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+  30%           { transform: translateY(-4px); opacity: 1; }
+}
+.typing-dot:nth-child(1) { animation: typing-dot 1.2s ease-in-out infinite 0s; }
+.typing-dot:nth-child(2) { animation: typing-dot 1.2s ease-in-out infinite 0.2s; }
+.typing-dot:nth-child(3) { animation: typing-dot 1.2s ease-in-out infinite 0.4s; }
+
+/* ─── Legacy float animation (kept for compatibility) ─── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
 .animate-float {
   animation: float 6s ease-in-out infinite;
+}
+
+/* ─── Grid flow (Tailwind keyframe companion) ─── */
+@keyframes grid-flow {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 60px; }
+}
+
+/* ─── Glow pulse ─── */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.8; }
 }

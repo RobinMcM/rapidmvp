@@ -68,3 +68,13 @@ model UserSiteRole {
   @@unique([userId, siteId])
   @@index([siteId, role])
 }
+
+model Lead {
+  id          String   @id @default(uuid())
+  name        String
+  company     String
+  email       String
+  projectType String?
+  teamSize    String?
+  createdAt   DateTime @default(now())
+}

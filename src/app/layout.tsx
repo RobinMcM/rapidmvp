@@ -6,8 +6,9 @@ import Footer from '../components/Footer'
 import ChatbotIframe from '../components/ChatbotIframe'
 
 export const metadata: Metadata = {
-  title: 'RapidMvᵖ.io – Build Your MVP in Weeks, Not Months',
-  description: 'Professional MVP development agency. From idea to production in weeks.',
+  title: 'RapidMVP — AI-Native Cloud Architecture & Product Engineering',
+  description:
+    'Design, validate and evolve modern cloud platforms using AI-assisted architecture, Azure cloud services and Cloudflare edge infrastructure.',
   icons: {
     icon: '/favicon.svg',
     shortcut: '/favicon.svg',
@@ -17,10 +18,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-scroll-behavior="smooth">
+    <html lang="en">
       <body>
         <AuthProvider>
-          <div className="min-h-screen bg-gradient-to-b from-[#0a0a0f] via-[#1a1a2e] to-[#0a0a0f] text-white">
+          <div className="min-h-screen bg-rm-black text-white">
             <Navigation />
             <main>{children}</main>
             <Footer />
