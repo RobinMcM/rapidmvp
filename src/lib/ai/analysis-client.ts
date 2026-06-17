@@ -89,7 +89,7 @@ export async function analyseDocumentFindings(
         json_schema: ANALYSIS_JSON_SCHEMA,
       },
     },
-  } as Parameters<Anthropic['messages']['create']>[0])
+  } as Parameters<Anthropic['messages']['create']>[0]) as Anthropic.Message
 
   const text = response.content.find((b) => b.type === 'text')?.text ?? '{}'
   const parsed = JSON.parse(text) as { findings?: AnalysisResult[] }
