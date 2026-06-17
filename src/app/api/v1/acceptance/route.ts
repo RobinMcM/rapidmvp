@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ overallStatus })
   } catch (err) {
     if (err instanceof HttpError) {
-      return NextResponse.json({ error: err.message }, { status: err.statusCode })
+      return NextResponse.json({ error: err.message }, { status: err.status })
     }
     console.error('[POST /api/v1/acceptance]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
