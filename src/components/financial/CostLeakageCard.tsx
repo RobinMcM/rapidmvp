@@ -1,4 +1,4 @@
-import type { LeakageItem } from '../../../lib/financial/resilience-scorer'
+import type { LeakageItem } from '../../lib/financial/resilience-scorer'
 
 const impactColour: Record<string, string> = {
   low: 'bg-slate-800 text-slate-400',

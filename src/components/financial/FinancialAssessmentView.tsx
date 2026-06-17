@@ -1,4 +1,4 @@
-import type { LeakageItem, RiskDecision } from '../../../lib/financial/resilience-scorer'
+import type { LeakageItem, RiskDecision } from '../../lib/financial/resilience-scorer'
 import ScoreGauge from './ScoreGauge'
 import CostLeakageCard from './CostLeakageCard'
 import RiskDecisionTable from './RiskDecisionTable'

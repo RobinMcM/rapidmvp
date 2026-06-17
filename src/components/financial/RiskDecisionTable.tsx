@@ -1,4 +1,4 @@
-import type { RiskDecision } from '../../../lib/financial/resilience-scorer'
+import type { RiskDecision } from '../../lib/financial/resilience-scorer'
 
 const ALL_TIERS: { tier: RiskDecision['tier']; label: string; range: string; action: string }[] = [
   { tier: 'high', label: 'High Financial Risk', range: '0 – 39', action: 'Escalate to client leadership. Freeze non-critical spend pending remediation.' },
