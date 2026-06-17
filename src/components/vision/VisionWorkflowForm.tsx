@@ -212,7 +212,7 @@ export default function VisionWorkflowForm() {
         {!isLast && (
           <button
             type="button"
-            onClick={() => setFields((f) => ({ ...f, [current.key]: '' }) as Fields) || handleNext()}
+            onClick={() => { setFields((f) => ({ ...f, [current.key]: '' }) as Fields); handleNext() }}
             className="text-slate-600 hover:text-slate-400 text-sm transition-colors"
           >
             Skip
