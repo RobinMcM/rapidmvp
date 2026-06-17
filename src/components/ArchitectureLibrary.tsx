@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 const patterns = [
   {
+    slug: 'ai-saas-platform',
     category: 'AI Platform',
     title: 'AI SaaS Platform',
     description:
@@ -13,6 +14,7 @@ const patterns = [
     accentColor: 'azure',
   },
   {
+    slug: 'multi-tenant-saas-platform',
     category: 'SaaS',
     title: 'Multi-Tenant SaaS Platform',
     description:
@@ -24,6 +26,7 @@ const patterns = [
     accentColor: 'azure',
   },
   {
+    slug: 'rag-knowledge-platform',
     category: 'AI / Knowledge',
     title: 'RAG Knowledge Platform',
     description:
@@ -35,6 +38,7 @@ const patterns = [
     accentColor: 'azure',
   },
   {
+    slug: 'global-content-platform',
     category: 'Content & Edge',
     title: 'Global Content Platform',
     description:
@@ -46,6 +50,7 @@ const patterns = [
     accentColor: 'cf-orange',
   },
   {
+    slug: 'enterprise-automation-platform',
     category: 'Enterprise',
     title: 'Enterprise Automation Platform',
     description:
@@ -86,11 +91,12 @@ export default function ArchitectureLibrary() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {patterns.map(({ category, title, description, stack, decisions, security, deployment, accentColor }) => {
+          {patterns.map(({ slug, category, title, description, stack, decisions, security, deployment, accentColor }) => {
             const isOrange = accentColor === 'cf-orange'
             return (
-              <article
-                key={title}
+              <Link
+                key={slug}
+                href={`/blueprints/${slug}`}
                 className={`rounded-xl border bg-rm-dark-2/70 overflow-hidden flex flex-col transition-all duration-300 group ${
                   isOrange
                     ? 'border-slate-800 hover:border-cf-orange/40 card-glow-orange'
@@ -153,7 +159,7 @@ export default function ArchitectureLibrary() {
                     </div>
                   </div>
                 </div>
-              </article>
+              </Link>
             )
           })}
         </div>

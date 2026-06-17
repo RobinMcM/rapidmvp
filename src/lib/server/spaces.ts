@@ -1,4 +1,4 @@
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { readRequiredEnv } from './runtime-env'
 
@@ -59,6 +59,61 @@ function extensionForMimeType(contentType: string) {
   }
 
   throw new Error('Unsupported content type')
+}
+
+const DOCUMENT_MIME_MAP: Record<string, string> = {
+  pdf: 'application/pdf',
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  markdown: 'text/markdown',
+  terraform: 'text/plain',
+  bicep: 'text/plain',
+  arm: 'application/json',
+  csv: 'text/csv',
+  screenshot: 'image/png',
+}
+
+const DOCUMENT_MAX_BYTES: Record<string, number> = {
+  screenshot: 5 * 1024 * 1024,
+}
+const DEFAULT_DOC_MAX_BYTES = 20 * 1024 * 1024
+
+export async function generateDocumentUploadUrl(input: {
+  blueprintId: string
+  documentId: string
+  fileName: string
+  fileType: string
+}) {
+  const config = getSpacesConfig()
+
+  const contentType = DOCUMENT_MIME_MAP[input.fileType]
+  if (!contentType) {
+    throw new Error(`Unsupported document type: ${input.fileType}`)
+  }
+
+  const maxBytes = DOCUMENT_MAX_BYTES[input.fileType] ?? DEFAULT_DOC_MAX_BYTES
+  const spacesKey = `documents/${input.blueprintId}/${input.documentId}/${input.fileName}`
+
+  const command = new PutObjectCommand({
+    Bucket: config.bucket,
+    Key: spacesKey,
+    ContentType: contentType,
+  })
+
+  const presignedUrl = await getSignedUrl(config.client, command, { expiresIn: 300 })
+
+  return { presignedUrl, spacesKey, expiresIn: 300, maxBytes }
+}
+
+export async function getDocumentBuffer(spacesKey: string): Promise<Buffer> {
+  const config = getSpacesConfig()
+  const command = new GetObjectCommand({ Bucket: config.bucket, Key: spacesKey })
+  const response = await config.client.send(command)
+
+  const chunks: Uint8Array[] = []
+  for await (const chunk of response.Body as AsyncIterable<Uint8Array>) {
+    chunks.push(chunk)
+  }
+  return Buffer.concat(chunks)
 }
 
 export async function createAvatarUploadUrl(input: {

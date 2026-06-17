@@ -1,5 +1,8 @@
+import Link from 'next/link'
+
 const blueprints = [
   {
+    slug: 'ai-saas-platform',
     category: 'AI Platform',
     title: 'AI SaaS Platform',
     description:
@@ -14,6 +17,7 @@ const blueprints = [
     accentColor: 'azure',
   },
   {
+    slug: 'global-content-platform',
     category: 'Content Platform',
     title: 'Global Content Platform',
     description:
@@ -28,6 +32,7 @@ const blueprints = [
     accentColor: 'cf-orange',
   },
   {
+    slug: 'enterprise-automation-platform',
     category: 'Enterprise',
     title: 'Enterprise Automation Platform',
     description:
@@ -59,12 +64,13 @@ export default function BlueprintShowcase() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {blueprints.map(({ category, title, description, services, deliverables, accentColor }) => {
+          {blueprints.map(({ slug, category, title, description, services, deliverables, accentColor }) => {
             const isOrange = accentColor === 'cf-orange'
             return (
-              <article
-                key={title}
-                className={`rounded-xl border bg-rm-dark-2/70 p-6 flex flex-col gap-5 transition-all duration-300 ${
+              <Link
+                key={slug}
+                href={`/blueprints/${slug}`}
+                className={`rounded-xl border bg-rm-dark-2/70 p-6 flex flex-col gap-5 transition-all duration-300 group ${
                   isOrange
                     ? 'border-slate-800 hover:border-cf-orange/40 card-glow-orange'
                     : 'border-slate-800 hover:border-azure/40 card-glow-azure'
@@ -83,7 +89,7 @@ export default function BlueprintShowcase() {
 
                 {/* Title & description */}
                 <div>
-                  <h3 className="text-white font-bold text-lg mb-2">{title}</h3>
+                  <h3 className="text-white font-bold text-lg mb-2 group-hover:text-azure-300 transition-colors">{title}</h3>
                   <p className="text-slate-400 text-sm leading-relaxed">{description}</p>
                 </div>
 
@@ -112,12 +118,15 @@ export default function BlueprintShowcase() {
                   </ul>
                 </div>
 
-                <div className="mt-auto pt-4 border-t border-slate-800/60">
+                <div className="mt-auto pt-4 border-t border-slate-800/60 flex items-center justify-between">
                   <span className="label-mono text-slate-600 text-[10px]">
                     Documentation generated · Implementation-ready
                   </span>
+                  <span className={`text-xs font-medium ${isOrange ? 'text-cf-orange' : 'text-azure'}`}>
+                    View →
+                  </span>
                 </div>
-              </article>
+              </Link>
             )
           })}
         </div>

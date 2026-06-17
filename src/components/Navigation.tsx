@@ -93,6 +93,16 @@ export default function Navigation() {
           {sessionExists ? (
             <>
               <Link
+                href="/workspace"
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  pathname.startsWith('/workspace')
+                    ? 'text-white bg-slate-800/70'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
+                }`}
+              >
+                Workspace
+              </Link>
+              <Link
                 href="/account"
                 className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   pathname === '/account'
@@ -164,6 +174,13 @@ export default function Navigation() {
           <div className="mt-2 pt-3 border-t border-slate-800/60 flex flex-col gap-2">
             {sessionExists ? (
               <>
+                <Link
+                  href="/workspace"
+                  className="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Workspace
+                </Link>
                 <Link
                   href="/account"
                   className="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors"
