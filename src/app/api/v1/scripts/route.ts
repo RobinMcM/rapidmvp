@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(scripts)
   } catch (err) {
     if (err instanceof HttpError) {
-      return NextResponse.json({ error: err.message }, { status: err.statusCode })
+      return NextResponse.json({ error: err.message }, { status: err.status })
     }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true })
   } catch (err) {
     if (err instanceof HttpError) {
-      return NextResponse.json({ error: err.message }, { status: err.statusCode })
+      return NextResponse.json({ error: err.message }, { status: err.status })
     }
     console.error('[POST /api/v1/scripts]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

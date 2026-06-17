@@ -167,7 +167,7 @@ export async function POST(
     return NextResponse.json({ findingsCount: findings.length, parseStatus: 'parsed' })
   } catch (err) {
     if (err instanceof HttpError) {
-      return NextResponse.json({ error: err.message }, { status: err.statusCode })
+      return NextResponse.json({ error: err.message }, { status: err.status })
     }
     console.error('[POST /api/v1/documents/[documentId]/parse]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

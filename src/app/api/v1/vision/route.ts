@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ blueprintId: blueprint.id })
   } catch (err) {
     if (err instanceof HttpError) {
-      return NextResponse.json({ error: err.message }, { status: err.statusCode })
+      return NextResponse.json({ error: err.message }, { status: err.status })
     }
     console.error('[POST /api/v1/vision]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
