@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
 type Role = 'user' | 'ai' | 'typing'
@@ -44,7 +44,6 @@ const LOOP_DELAY = 10000
 export default function AIArchitectPreview() {
   const [visibleCount, setVisibleCount] = useState(0)
   const [showTyping, setShowTyping]     = useState(false)
-  const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = []
@@ -74,10 +73,6 @@ export default function AIArchitectPreview() {
     run()
     return () => timers.forEach(clearTimeout)
   }, [])
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-  }, [visibleCount, showTyping])
 
   return (
     <section className="bg-rm-black py-24 px-6" aria-label="AI Architect preview">
@@ -216,7 +211,6 @@ export default function AIArchitectPreview() {
                   </div>
                 )}
 
-                <div ref={bottomRef} />
               </div>
 
               {/* Input bar */}
