@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import { scaffoldQuestions } from '../../../lib/scaffoldConfig'
 import { deriveScaffoldOutput } from '../../../lib/scaffoldEngine'
-import type { LoginRequirement, ProjectConfig, ScaffoldType } from '../../../types/scaffold'
+import type { LoginRequirement, ProjectConfig, ScaffoldType } from '../../types/scaffold'
 import GenerateButton from './GenerateButton'
 import ProgressBar from './ProgressBar'
 import QuestionCard from './QuestionCard'

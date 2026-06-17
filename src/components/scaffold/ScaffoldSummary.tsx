@@ -1,4 +1,4 @@
-import type { ScaffoldOutput } from '../../../types/scaffold'
+import type { ScaffoldOutput } from '../../types/scaffold'
 
 type ScaffoldSummaryProps = {
   output: ScaffoldOutput

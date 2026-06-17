@@ -1,4 +1,4 @@
-import type { AcceptanceCategoryResult, AcceptanceCategoryStatus } from '../../../types/acceptance'
+import type { AcceptanceCategoryResult, AcceptanceCategoryStatus } from '../../types/acceptance'
 import AcceptanceCategoryCard from './AcceptanceCategoryCard'
 
 const overallBanner: Record<string, { label: string; colour: string }> = {

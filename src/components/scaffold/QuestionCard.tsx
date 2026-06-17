@@ -1,4 +1,4 @@
-import type { Question } from '../../../types/scaffold'
+import type { Question } from '../../types/scaffold'
 import OptionButton from './OptionButton'
 
 type QuestionCardProps = {

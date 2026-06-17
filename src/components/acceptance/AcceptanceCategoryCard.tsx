@@ -1,4 +1,4 @@
-import type { AcceptanceCategoryStatus } from '../../../types/acceptance'
+import type { AcceptanceCategoryStatus } from '../../types/acceptance'
 
 const statusConfig: Record<AcceptanceCategoryStatus, { label: string; colour: string; icon: string }> = {
   pass: { label: 'Pass', colour: 'bg-emerald-900/40 text-emerald-400 border-emerald-900/60', icon: '✓' },
