@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import BlueprintShowcase   from '../../components/BlueprintShowcase'
 import ArchitectureLibrary from '../../components/ArchitectureLibrary'
 import RegistrationSection from '../../components/RegistrationSection'
 
@@ -22,46 +21,12 @@ export default function BlueprintsPage() {
             Platform blueprints for modern cloud engineering
           </h1>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-            Every blueprint is a complete, documented architecture output — produced through
-            AI-assisted discovery and refined with your technical team.
+            Select a blueprint to explore the full architecture — services, security model, cost drivers, and delivery workflow.
           </p>
         </div>
         <div className="divider-azure mt-16" aria-hidden />
       </div>
 
-      {/* What you receive in a blueprint */}
-      <section className="bg-rm-dark py-16 px-6">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-white mb-8 text-center">
-            Every blueprint contains
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {[
-              'Executive Summary',
-              'Azure Architecture',
-              'Cloudflare Design',
-              'Security Model',
-              'DevOps Strategy',
-              'IaC Guidance',
-              'AI Opportunities',
-              'Scaling Plan',
-              'Cost Analysis',
-              'Risk Assessment',
-              'Implementation Roadmap',
-              'Future Roadmap',
-            ].map((item) => (
-              <div
-                key={item}
-                className="rounded-lg border border-slate-800 bg-rm-dark-2/60 px-3 py-3 text-center"
-              >
-                <span className="text-slate-400 text-xs font-medium">{item}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <BlueprintShowcase />
       <ArchitectureLibrary />
       <RegistrationSection />
     </>
