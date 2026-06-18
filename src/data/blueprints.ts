@@ -12,6 +12,7 @@ export type Blueprint = {
   title: string
   description: string
   summary: string
+  businessUseCase: string
   azure: string[]
   cloudflare: string[]
   ai: string[]
@@ -24,6 +25,8 @@ export type Blueprint = {
   scalingModel: string
   costDrivers: string[]
   riskAreas: string[]
+  architectInsight: string
+  commonMistakes: string[]
   accentColor: 'azure' | 'cf-orange'
   workflowPreview: WorkflowPhase[]
 }
@@ -37,6 +40,8 @@ export const BLUEPRINTS: Blueprint[] = [
       'Multi-tenant SaaS with embedded AI capabilities, enterprise authentication and global edge delivery.',
     summary:
       'A production-grade AI SaaS architecture combining Azure Container Apps, Azure OpenAI, and Cloudflare edge. Designed for multi-tenant isolation, RAG pipelines, and enterprise compliance.',
+    businessUseCase:
+      'B2B SaaS products embedding AI features — document summarisation, chat, or recommendation — into subscription platforms where enterprise buyers require GDPR compliance, SOC 2 alignment, and strict per-tenant data isolation.',
     azure: ['Azure Container Apps', 'Azure OpenAI', 'PostgreSQL Flexible Server', 'Azure AI Search', 'Azure Key Vault', 'Azure Monitor'],
     cloudflare: ['Cloudflare Workers', 'Cloudflare CDN', 'Cloudflare Zero Trust'],
     ai: ['Azure OpenAI (GPT-4)', 'Azure AI Search (vector)', 'Prompt caching layer'],
@@ -54,6 +59,13 @@ export const BLUEPRINTS: Blueprint[] = [
     scalingModel: 'Horizontal pod autoscaling on Container Apps; AI Search replicas on demand',
     costDrivers: ['Azure OpenAI token consumption', 'AI Search index size', 'Container Apps replica count'],
     riskAreas: ['OpenAI rate limits under load', 'Tenant data bleed in shared vector index', 'Token cost overrun without capping'],
+    architectInsight:
+      'The biggest cost trap in AI SaaS is uncapped token consumption per tenant. Define your AI spend envelope per subscription tier before any architecture work begins, and enforce it at the middleware layer — not inside the LLM call itself.',
+    commonMistakes: [
+      'Putting all tenants in a shared vector index without per-document ACL enforcement — the first data bleed incident is usually discovered in production',
+      'Skipping prompt caching during early development, then discovering OpenAI costs run 3× the forecast at scale',
+      'Treating Azure AD B2C tenant configuration as an afterthought — your JWT claim structure defines the entire authorisation model and is very painful to change later',
+    ],
     accentColor: 'azure',
     workflowPreview: [
       {
@@ -87,6 +99,8 @@ export const BLUEPRINTS: Blueprint[] = [
       'Scalable multi-tenant architecture with data isolation, usage metering, subscription management and global availability.',
     summary:
       'Schema-per-tenant PostgreSQL isolation, async billing via Service Bus, and Cloudflare Workers for global routing. Built for subscription SaaS with usage metering and feature flags per tier.',
+    businessUseCase:
+      'Horizontal SaaS products with a tiered subscription model where each tier needs different feature sets, data isolation levels, and usage-based billing. Common in vertical SaaS, HR tooling, and project management platforms serving business customers.',
     azure: ['Azure Container Apps', 'Azure SQL', 'Azure Service Bus', 'Azure Monitor', 'Azure Key Vault'],
     cloudflare: ['Cloudflare Workers', 'Cloudflare CDN', 'Cloudflare Pages'],
     ai: [],
@@ -104,6 +118,13 @@ export const BLUEPRINTS: Blueprint[] = [
     scalingModel: 'Container Apps horizontal scaling; SQL Elastic Pool per tier',
     costDrivers: ['Azure SQL DTUs per tenant', 'Service Bus message volume', 'Container Apps compute'],
     riskAreas: ['Schema migration across N tenants', 'Billing event loss if Service Bus DLQ not monitored', 'Tenant offboarding data deletion'],
+    architectInsight:
+      'Schema-per-tenant feels expensive upfront but eliminates the most common scaling bottleneck: tenant data bleed and the inability to run clean tenant-scoped migrations. Row-level security is faster to ship initially but will cost significantly more in engineering time as you scale beyond 50 tenants.',
+    commonMistakes: [
+      "Choosing row-level security over schema isolation 'to keep it simple' then rearchitecting 18 months later when tenant migration performance becomes unacceptable",
+      'Not monitoring the Service Bus dead-letter queue — silent billing event loss surfaces as customer support tickets rather than error alerts',
+      'Building tenant offboarding as a manual process rather than a first-class provisioning API operation',
+    ],
     accentColor: 'azure',
     workflowPreview: [
       {
@@ -137,6 +158,8 @@ export const BLUEPRINTS: Blueprint[] = [
       'Enterprise knowledge retrieval platform using Retrieval-Augmented Generation, semantic search and Azure AI infrastructure.',
     summary:
       'Hybrid vector + keyword search via Azure AI Search, OpenAI embeddings, and document-level ACL. Built for enterprise knowledge bases with MSFT Entra auth and staged document ingestion pipelines.',
+    businessUseCase:
+      'Enterprise teams with large internal document repositories — policy libraries, technical documentation, contracts — who need AI-powered search and Q&A rather than keyword lookup. Particularly valuable in regulated industries where document traceability and access control are required.',
     azure: ['Azure AI Search', 'Azure OpenAI', 'Azure Functions', 'Azure Blob Storage', 'Azure Monitor', 'Azure Key Vault'],
     cloudflare: ['Cloudflare Workers', 'Cloudflare CDN'],
     ai: ['Azure OpenAI (embeddings + completion)', 'Azure AI Search (hybrid mode)', 'Relevance scoring pipeline'],
@@ -154,6 +177,13 @@ export const BLUEPRINTS: Blueprint[] = [
     scalingModel: 'AI Search replicas for query throughput; Functions scale on consumption plan',
     costDrivers: ['OpenAI embedding token cost at ingestion', 'AI Search SU count', 'Azure Functions execution volume'],
     riskAreas: ['Stale embeddings after document updates', 'ACL bypass if query-time enforcement is missed', 'Chunking strategy quality impact on retrieval accuracy'],
+    architectInsight:
+      'Retrieval quality is entirely determined by your chunking strategy, not your LLM choice. Most teams chunk by token count then wonder why answers are incomplete. Chunk at logical paragraph boundaries with semantic overlap — the retrieval accuracy difference on a representative test set is always measurable.',
+    commonMistakes: [
+      'Using a fixed token chunk size without considering document structure — tables, lists, and code blocks chunk badly by count alone',
+      'Not refreshing embeddings after document updates — stale vectors return confidently wrong results with no visible error signal',
+      'Embedding the entire corpus before validating retrieval quality on a representative test set — late discovery of chunking failures is expensive to fix',
+    ],
     accentColor: 'azure',
     workflowPreview: [
       {
@@ -187,6 +217,8 @@ export const BLUEPRINTS: Blueprint[] = [
       'High-performance content delivery platform with edge caching, global distribution and intelligent routing.',
     summary:
       'Edge-first architecture with Cloudflare Workers, stale-while-revalidate caching, and Azure as the origin. Designed for sub-100ms global TTFB with origin shield topology and automated cache invalidation.',
+    businessUseCase:
+      'Media publishers, e-commerce sites, and marketing platforms that require sub-100ms page delivery globally, with high cache hit rates and reliable content invalidation. Any platform where latency directly impacts conversion or user retention.',
     azure: ['Azure Blob Storage', 'Azure Functions', 'Azure Front Door', 'Azure CDN', 'Azure Monitor'],
     cloudflare: ['Cloudflare Workers', 'Cloudflare CDN', 'Cloudflare Pages', 'Cloudflare R2'],
     ai: [],
@@ -204,6 +236,13 @@ export const BLUEPRINTS: Blueprint[] = [
     scalingModel: 'Cloudflare auto-scales at edge; Azure Functions consumption plan for origin compute',
     costDrivers: ['Cloudflare Workers request volume', 'R2 storage and egress', 'Azure Blob Storage egress'],
     riskAreas: ['Cache poisoning if input sanitisation missing in Workers', 'Cache invalidation lag on fast-changing content', 'Origin single point of failure without Front Door'],
+    architectInsight:
+      "Cache invalidation is the hard part — not CDN configuration. Define your invalidation contract before writing any Workers logic. The question is never 'should we cache?' but 'how quickly must stale content disappear and what are we prepared to pay in origin cost for that guarantee?'",
+    commonMistakes: [
+      'Configuring aggressive global TTLs then discovering a significant portion of content changes faster than the TTL allows',
+      'Not implementing cache tags from the start — purging by URL at scale becomes operationally expensive very quickly',
+      'Treating Azure Front Door as optional, then discovering Cloudflare-to-origin egress costs dominate the bill on high-traffic days without an origin shield in place',
+    ],
     accentColor: 'cf-orange',
     workflowPreview: [
       {
@@ -237,6 +276,8 @@ export const BLUEPRINTS: Blueprint[] = [
       'Secure internal automation platform with Zero Trust access, workflow orchestration and AI-assisted processing.',
     summary:
       'Zero Trust network via Cloudflare with Azure Container Apps orchestration, Service Bus saga patterns, and AI-assisted workflow routing. Built for internal enterprise workloads with strict security posture.',
+    businessUseCase:
+      'Internal IT and operations teams in mid-to-large enterprises automating multi-step workflows — employee onboarding, approval chains, data reconciliation — where strict security posture, complete audit trails, and SSO integration are non-negotiable.',
     azure: ['Azure Container Apps', 'Azure Service Bus', 'Azure AI', 'Azure Key Vault', 'Azure Monitor', 'Azure Logic Apps'],
     cloudflare: ['Cloudflare Zero Trust', 'Cloudflare Tunnel', 'Cloudflare Workers'],
     ai: ['Azure AI (classification)', 'Azure OpenAI (workflow routing assistance)'],
@@ -254,6 +295,13 @@ export const BLUEPRINTS: Blueprint[] = [
     scalingModel: 'Container Apps horizontal scaling; Service Bus partitions for throughput',
     costDrivers: ['Container Apps compute for automation workers', 'Service Bus message operations', 'Azure AI classification calls'],
     riskAreas: ['Saga compensating transactions on partial workflow failure', 'WASM sandbox escape risk on untrusted payloads', 'Key Vault throttling under high secrets rotation volume'],
+    architectInsight:
+      'The saga pattern adds real operational complexity. Before committing to it, map every workflow step that can fail and determine whether you need automated compensation or whether a human-in-the-loop fallback is genuinely acceptable. Most teams over-engineer orchestration and under-engineer the monitoring tooling needed to operate it.',
+    commonMistakes: [
+      'Implementing sagas without operational visibility — a stuck saga is nearly impossible to diagnose without a dedicated workflow state dashboard and alert rules',
+      'Using shared secrets across workflow components instead of per-component Managed Identity — this is the most common finding in enterprise security audits',
+      'Not enforcing device posture checks from day one — retrofitting Zero Trust controls after workflows are live breaks existing integrations and requires a full re-enrollment campaign',
+    ],
     accentColor: 'azure',
     workflowPreview: [
       {
