@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import BlueprintShowcase   from '../../components/BlueprintShowcase'
 import ArchitectureLibrary from '../../components/ArchitectureLibrary'
 import RegistrationSection from '../../components/RegistrationSection'
@@ -36,25 +37,26 @@ export default function BlueprintsPage() {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
-              'Executive Summary',
-              'Azure Architecture',
-              'Cloudflare Design',
-              'Security Model',
-              'DevOps Strategy',
-              'IaC Guidance',
-              'AI Opportunities',
-              'Scaling Plan',
-              'Cost Analysis',
-              'Risk Assessment',
-              'Implementation Roadmap',
-              'Future Roadmap',
-            ].map((item) => (
-              <div
-                key={item}
-                className="rounded-lg border border-slate-800 bg-rm-dark-2/60 px-3 py-3 text-center"
+              { label: 'Executive Summary',      href: '/blueprints/ai-saas-platform' },
+              { label: 'Azure Architecture',     href: '/blueprints/ai-saas-platform' },
+              { label: 'Cloudflare Design',      href: '/blueprints/global-content-platform' },
+              { label: 'Security Model',         href: '/blueprints/enterprise-automation-platform' },
+              { label: 'DevOps Strategy',        href: '/blueprints/multi-tenant-saas-platform' },
+              { label: 'IaC Guidance',           href: '/blueprints/multi-tenant-saas-platform' },
+              { label: 'AI Opportunities',       href: '/blueprints/rag-knowledge-platform' },
+              { label: 'Scaling Plan',           href: '/blueprints/multi-tenant-saas-platform' },
+              { label: 'Cost Analysis',          href: '/blueprints/global-content-platform' },
+              { label: 'Risk Assessment',        href: '/blueprints/enterprise-automation-platform' },
+              { label: 'Implementation Roadmap', href: '/blueprints/ai-saas-platform' },
+              { label: 'Future Roadmap',         href: '/blueprints/ai-saas-platform' },
+            ].map(({ label, href }) => (
+              <Link
+                key={label}
+                href={href}
+                className="rounded-lg border border-slate-800 bg-rm-dark-2/60 px-3 py-3 text-center cursor-pointer hover:border-azure/40 hover:bg-rm-dark-2 transition-colors"
               >
-                <span className="text-slate-400 text-xs font-medium">{item}</span>
-              </div>
+                <span className="text-slate-400 text-xs font-medium">{label}</span>
+              </Link>
             ))}
           </div>
         </div>
