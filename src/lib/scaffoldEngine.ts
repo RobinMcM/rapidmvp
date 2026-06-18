@@ -1,28 +1,26 @@
+import {
+  aiModesByScaffoldType,
+  authDefaultByScaffoldType,
+  loginEnabledByAnswer,
+  pageSetByScaffoldType,
+} from './scaffoldConfig'
 import type { ProjectConfig, ScaffoldOutput } from '../types/scaffold'
 
-const pagesByType: Record<string, string[]> = {
-  saas: ['Landing', 'Dashboard', 'Settings', 'Billing'],
-  content: ['Home', 'Browse', 'Article', 'Profile'],
-  marketplace: ['Home', 'Listings', 'Item', 'Checkout', 'Dashboard'],
-  tool: ['Home', 'Tool', 'Results'],
-}
-
-const aiByType: Record<string, string[]> = {
-  saas: ['Generate', 'Summarise'],
-  content: ['Summarise', 'Recommend'],
-  marketplace: ['Describe', 'Recommend'],
-  tool: ['Generate'],
-}
-
 export function deriveScaffoldOutput(config: ProjectConfig): ScaffoldOutput {
+  const scaffoldType = config.scaffold_type
+  const authDefaults = authDefaultByScaffoldType[scaffoldType]
+  const loginRequested = loginEnabledByAnswer[config.needs_auth]
+
+  const authEnabled = authDefaults.optional ? loginRequested : true
+
   return {
-    scaffoldType: config.scaffold_type,
-    pageSet: pagesByType[config.scaffold_type] ?? ['Home'],
+    scaffoldType,
+    pageSet: [...pageSetByScaffoldType[scaffoldType]],
+    aiModes: [...aiModesByScaffoldType[scaffoldType]],
     auth: {
-      enabled: config.needs_auth !== 'none',
-      recipe: 'emailpassword',
-      optional: config.needs_auth === 'optional',
+      enabled: authEnabled,
+      optional: authDefaults.optional,
+      recipe: authEnabled ? authDefaults.recipe : null,
     },
-    aiModes: aiByType[config.scaffold_type] ?? ['Generate'],
   }
 }
