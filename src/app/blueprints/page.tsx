@@ -28,6 +28,38 @@ export default function BlueprintsPage() {
         <div className="divider-azure mt-16" aria-hidden />
       </div>
 
+      {/* What you receive in a blueprint */}
+      <section className="bg-rm-dark py-16 px-6">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-2xl font-bold text-white mb-8 text-center">
+            Every blueprint contains
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {[
+              'Executive Summary',
+              'Azure Architecture',
+              'Cloudflare Design',
+              'Security Model',
+              'DevOps Strategy',
+              'IaC Guidance',
+              'AI Opportunities',
+              'Scaling Plan',
+              'Cost Analysis',
+              'Risk Assessment',
+              'Implementation Roadmap',
+              'Future Roadmap',
+            ].map((item) => (
+              <div
+                key={item}
+                className="rounded-lg border border-slate-800 bg-rm-dark-2/60 px-3 py-3 text-center"
+              >
+                <span className="text-slate-400 text-xs font-medium">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <BlueprintShowcase />
       <ArchitectureLibrary />
       <RegistrationSection />
