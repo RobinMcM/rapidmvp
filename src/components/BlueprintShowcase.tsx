@@ -70,7 +70,7 @@ export default function BlueprintShowcase() {
               <Link
                 key={slug}
                 href={`/blueprints/${slug}`}
-                className={`rounded-xl border bg-rm-dark-2/70 p-6 flex flex-col gap-5 transition-all duration-300 group ${
+                className={`rounded-xl border bg-rm-dark-2/70 p-6 flex flex-col gap-5 transition-all duration-300 group cursor-pointer select-none ${
                   isOrange
                     ? 'border-slate-800 hover:border-cf-orange/40 card-glow-orange'
                     : 'border-slate-800 hover:border-azure/40 card-glow-azure'

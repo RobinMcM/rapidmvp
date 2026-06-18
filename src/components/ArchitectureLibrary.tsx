@@ -97,7 +97,7 @@ export default function ArchitectureLibrary() {
               <Link
                 key={slug}
                 href={`/blueprints/${slug}`}
-                className={`rounded-xl border bg-rm-dark-2/70 overflow-hidden flex flex-col transition-all duration-300 group ${
+                className={`rounded-xl border bg-rm-dark-2/70 overflow-hidden flex flex-col transition-all duration-300 group cursor-pointer select-none ${
                   isOrange
                     ? 'border-slate-800 hover:border-cf-orange/40 card-glow-orange'
                     : 'border-slate-800 hover:border-azure/40 card-glow-azure'
