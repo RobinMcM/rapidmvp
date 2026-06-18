@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import BlueprintShowcase   from '../../components/BlueprintShowcase'
 import ArchitectureLibrary from '../../components/ArchitectureLibrary'
 import RegistrationSection from '../../components/RegistrationSection'
 
@@ -27,6 +28,7 @@ export default function BlueprintsPage() {
         <div className="divider-azure mt-16" aria-hidden />
       </div>
 
+      <BlueprintShowcase />
       <ArchitectureLibrary />
       <RegistrationSection />
     </>
