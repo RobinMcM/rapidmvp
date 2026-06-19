@@ -9,12 +9,13 @@ export default function BlueprintSubNav({ blueprintId }: Props) {
   const pathname = usePathname()
 
   const tabs = [
-    { label: 'Assessment',    href: `/workspace/blueprints/${blueprintId}/assessment` },
-    { label: 'Costs & Risks', href: `/workspace/blueprints/${blueprintId}/costs-risks` },
-    { label: 'Build Scripts', href: `/workspace/blueprints/${blueprintId}/scripts` },
-    { label: 'Documents',     href: `/workspace/blueprints/${blueprintId}/documents` },
-    { label: 'Acceptance',    href: `/workspace/blueprints/${blueprintId}/acceptance` },
-    { label: 'Financial',     href: `/workspace/blueprints/${blueprintId}/financial` },
+    { label: 'Assessment',        href: `/workspace/blueprints/${blueprintId}/assessment` },
+    { label: 'Costs & Risks',     href: `/workspace/blueprints/${blueprintId}/costs-risks` },
+    { label: 'Build Scripts',     href: `/workspace/blueprints/${blueprintId}/scripts` },
+    { label: 'Documents',         href: `/workspace/blueprints/${blueprintId}/documents` },
+    { label: 'Acceptance',        href: `/workspace/blueprints/${blueprintId}/acceptance` },
+    { label: 'Financial',         href: `/workspace/blueprints/${blueprintId}/financial` },
+    { label: 'Repository Install', href: `/workspace/blueprints/${blueprintId}/repository-install` },
   ]
 
   return (

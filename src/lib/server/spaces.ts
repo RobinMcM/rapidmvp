@@ -70,10 +70,12 @@ const DOCUMENT_MIME_MAP: Record<string, string> = {
   arm: 'application/json',
   csv: 'text/csv',
   screenshot: 'image/png',
+  repository_zip: 'application/zip',
 }
 
 const DOCUMENT_MAX_BYTES: Record<string, number> = {
   screenshot: 5 * 1024 * 1024,
+  repository_zip: 100 * 1024 * 1024, // 100 MB — GitHub repo ZIPs can be large
 }
 const DEFAULT_DOC_MAX_BYTES = 20 * 1024 * 1024
 

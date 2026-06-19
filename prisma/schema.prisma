@@ -111,7 +111,8 @@ model ClientBlueprint {
   documents            DocumentUpload[]
   architectureFindings ArchitectureFinding[]
   acceptanceReport     AcceptanceReport?
-  financialAssessment  FinancialAssessment?
+  financialAssessment    FinancialAssessment?
+  repositoryAssessments  RepositoryAssessment[]
 
   @@index([clientId])
 }
@@ -213,9 +214,10 @@ model DocumentUpload {
   createdAt            DateTime             @default(now())
   updatedAt            DateTime             @updatedAt
   blueprint            ClientBlueprint      @relation(fields: [clientBlueprintId], references: [id], onDelete: Cascade)
-  findings             DocumentFinding[]
-  architectureFindings ArchitectureFinding[]
-  evidenceItems        EvidenceItem[]
+  findings              DocumentFinding[]
+  architectureFindings  ArchitectureFinding[]
+  evidenceItems         EvidenceItem[]
+  repositoryAssessment  RepositoryAssessment?
 
   @@index([clientBlueprintId])
 }
@@ -287,4 +289,38 @@ model FinancialAssessment {
   generatedAt       DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
   blueprint         ClientBlueprint @relation(fields: [clientBlueprintId], references: [id], onDelete: Cascade)
+}
+
+// ── Repository Assessment (Azure Installation Readiness) ─────────────────────
+
+model RepositoryAssessment {
+  id                    String          @id @default(uuid())
+  clientBlueprintId     String
+  documentUploadId      String?         @unique
+
+  repositoryName        String
+  status                String          @default("pending")
+  azureReadinessScore   Int?
+
+  detectedStack         String?
+  runtime               String?
+  packageManager        String?
+  buildCommand          String?
+  startCommand          String?
+  appType               String?
+
+  envVariablesJson      String?
+  azureServicesJson     String?
+  installStepsJson      String?
+  risksJson             String?
+  recommendationsJson   String?
+  adminDocumentMarkdown String?
+
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  blueprint             ClientBlueprint @relation(fields: [clientBlueprintId], references: [id], onDelete: Cascade)
+  documentUpload        DocumentUpload? @relation(fields: [documentUploadId], references: [id], onDelete: SetNull)
+
+  @@index([clientBlueprintId])
 }
