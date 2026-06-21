@@ -67,4 +67,27 @@ describe('detectStack', () => {
     expect(stack.language).toBe('unknown')
     expect(stack.framework).toBe('unknown')
   })
+
+  it('detects a project whose package.json lives in a subdirectory (monorepo)', () => {
+    const stack = detectStack(filesFrom({
+      'README.md': '# monorepo',
+      'apps/web/package.json': JSON.stringify({
+        scripts: { build: 'next build', start: 'next start' },
+        dependencies: { next: '^15.0.0' },
+      }),
+      'apps/web/package-lock.json': '{}',
+    }))
+    expect(stack.language).toBe('nodejs')
+    expect(stack.framework).toBe('nextjs')
+    expect(stack.packageManager).toBe('npm')
+    expect(stack.startCommand).toBe('next start')
+  })
+
+  it('prefers a root package.json over a nested one', () => {
+    const stack = detectStack(filesFrom({
+      'package.json': JSON.stringify({ dependencies: { express: '^4.0.0' }, scripts: { start: 'node .' } }),
+      'examples/demo/package.json': JSON.stringify({ dependencies: { next: '^15.0.0' } }),
+    }))
+    expect(stack.framework).toBe('express')
+  })
 })

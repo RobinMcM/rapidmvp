@@ -19,7 +19,7 @@ const BINARY_EXTS = new Set([
 ])
 
 const MAX_FILE_BYTES = 512 * 1024  // 512 KB per file
-const MAX_FILES = 250
+const MAX_SOURCE_FILES = 400       // budget for ordinary source files (manifests are always read)
 
 // Filenames worth reading no matter where they live
 const PRIORITY_NAMES = new Set([
@@ -83,19 +83,36 @@ function isInteresting(normalizedPath: string): boolean {
   return false
 }
 
+// Manifest / config / env files are always read, no matter how many source
+// files exist or where they sort — the stack detector depends on them.
+function isPriorityFile(relativePath: string): boolean {
+  const filename = relativePath.split('/').pop() ?? ''
+  if (PRIORITY_NAMES.has(filename)) return true
+  if (PRIORITY_NAMES.has(relativePath)) return true
+  if (filename.startsWith('.env')) return true
+  return false
+}
+
 /**
  * Reads a repository ZIP buffer in memory.
  * Returns a Map of normalised file path → text content.
+ *
+ * Two passes so the cap can never starve manifests:
+ *   1. every manifest/config/env file (at any depth), always read;
+ *   2. ordinary source files up to MAX_SOURCE_FILES.
+ *
  * Zip-slip safe, size-bounded, no disk writes.
  */
 export async function readZipFiles(buffer: Buffer): Promise<Map<string, string>> {
   const zip = await JSZip.loadAsync(buffer)
   const result = new Map<string, string>()
-  let count = 0
+
+  type Candidate = { entry: JSZip.JSZipObject; relativePath: string }
+  const priority: Candidate[] = []
+  const regular: Candidate[] = []
 
   for (const [entryName, entry] of Object.entries(zip.files)) {
     if (entry.dir) continue
-    if (count >= MAX_FILES) break
     if (isBlockedPath(entryName)) continue
     if (isBinaryExt(entryName)) continue
 
@@ -104,24 +121,37 @@ export async function readZipFiles(buffer: Buffer): Promise<Map<string, string>>
     const firstSlash = normalized.indexOf('/')
     const relativePath = firstSlash !== -1 ? normalized.slice(firstSlash + 1) : normalized
 
-    if (!relativePath || !isInteresting(relativePath)) continue
+    if (!relativePath) continue
 
+    if (isPriorityFile(relativePath)) priority.push({ entry, relativePath })
+    else if (isInteresting(relativePath)) regular.push({ entry, relativePath })
+  }
+
+  async function read({ entry, relativePath }: Candidate): Promise<void> {
+    if (result.has(relativePath)) return
     try {
       const uint8 = await entry.async('uint8array')
-
       // Record presence even when file is too large (enables lock-file detection)
       if (uint8.byteLength > MAX_FILE_BYTES) {
         result.set(relativePath, '')
-        count++
-        continue
+        return
       }
-
-      const text = new TextDecoder('utf-8', { fatal: false }).decode(uint8)
-      result.set(relativePath, text)
-      count++
+      result.set(relativePath, new TextDecoder('utf-8', { fatal: false }).decode(uint8))
     } catch {
       // Skip unreadable entries silently
     }
+  }
+
+  // Pass 1 — manifests/config/env, always
+  for (const c of priority) await read(c)
+
+  // Pass 2 — ordinary source files, bounded
+  let sourceCount = 0
+  for (const c of regular) {
+    if (sourceCount >= MAX_SOURCE_FILES) break
+    const before = result.size
+    await read(c)
+    if (result.size > before) sourceCount++
   }
 
   return result

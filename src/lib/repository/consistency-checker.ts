@@ -1,4 +1,5 @@
 import type { StackResult } from './stack-detector'
+import { findAppRoot } from './stack-detector'
 import type { EnvVariable } from './env-detector'
 
 // ── Public types ─────────────────────────────────────────────────────────────
@@ -38,7 +39,7 @@ export type ConsistencyReport = {
 
 const JS_EXTS = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs']
 const JS_EXT_SET = new Set(['ts', 'tsx', 'js', 'jsx', 'mjs', 'cjs'])
-const MAX_FILES_HINT = 250 // mirror of zip-reader's MAX_FILES
+const MAX_FILES_HINT = 400 // mirror of zip-reader's MAX_SOURCE_FILES budget
 
 // Skip resolving relative imports that target non-JS assets we never load.
 const NON_JS_IMPORT_EXT = /\.(css|scss|sass|less|json|svg|png|jpe?g|gif|webp|md|graphql|gql|wasm|txt|yml|yaml|html)$/i
@@ -207,7 +208,8 @@ export function checkConsistency(
   const sourceFiles = [...files.keys()].filter((p) => SOURCE_FILE(p) && (files.get(p)?.length ?? 0) > 0)
   const { rules: aliasRules } = loadAliases(files)
 
-  const pkg = parseJsonSafe(files.get('package.json') ?? '')
+  const appRoot = findAppRoot(files)
+  const pkg = parseJsonSafe(files.get(appRoot + 'package.json') ?? '')
   const deps: Record<string, string> = {
     ...((pkg?.dependencies as Record<string, string>) ?? {}),
     ...((pkg?.devDependencies as Record<string, string>) ?? {}),
@@ -291,7 +293,8 @@ export function checkConsistency(
       // but ignore the manifest/lockfiles where the name always appears.
       let referenced = false
       for (const [fname, src] of files) {
-        if (fname === 'package.json' || fname === 'yarn.lock' || fname === 'package-lock.json' || fname === 'pnpm-lock.yaml') continue
+        const base = fname.split('/').pop() ?? ''
+        if (base === 'package.json' || base === 'yarn.lock' || base === 'package-lock.json' || base === 'pnpm-lock.yaml') continue
         if (src && src.includes(name)) { referenced = true; break }
       }
       if (referenced) continue

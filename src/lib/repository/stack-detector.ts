@@ -20,6 +20,28 @@ function content(files: Map<string, string>, name: string): string {
   return files.get(name) ?? ''
 }
 
+// Locate the application root. Usually '' (repo root), but handles repos where
+// the app (and its package.json / manifest) lives in a subdirectory.
+const MANIFEST_NAMES = ['package.json', 'requirements.txt', 'pyproject.toml', 'Pipfile', 'go.mod', 'pom.xml', 'build.gradle']
+
+export function findAppRoot(files: Map<string, string>): string {
+  for (const m of MANIFEST_NAMES) {
+    if (files.has(m)) return '' // a manifest at repo root wins
+  }
+  let bestPrefix: string | null = null
+  let bestDepth = Infinity
+  for (const key of files.keys()) {
+    const filename = key.split('/').pop() ?? ''
+    if (!MANIFEST_NAMES.includes(filename)) continue
+    const depth = key.split('/').length
+    if (depth < bestDepth) {
+      bestDepth = depth
+      bestPrefix = key.slice(0, key.length - filename.length) // keeps trailing '/'
+    }
+  }
+  return bestPrefix ?? ''
+}
+
 function parseJson(text: string): Record<string, unknown> | null {
   try {
     return JSON.parse(text) as Record<string, unknown>
@@ -50,15 +72,23 @@ export function detectStack(files: Map<string, string>): StackResult {
   let hasDatabase = false
   let appType = 'unknown'
 
+  // Resolve the app root so subdirectory projects (monorepos) are detected.
+  const root = findAppRoot(files)
+  const has = (name: string) => hasFile(files, root + name) || (root !== '' && hasFile(files, name))
+  const get = (name: string) => {
+    const scoped = content(files, root + name)
+    return scoped || (root !== '' ? content(files, name) : '')
+  }
+
   // ── Package manager (Node ecosystem) ───────────────────────────────────────
-  if (hasFile(files, 'yarn.lock')) packageManager = 'yarn'
-  else if (hasFile(files, 'pnpm-lock.yaml')) packageManager = 'pnpm'
-  else if (hasFile(files, 'package-lock.json')) packageManager = 'npm'
+  if (has('yarn.lock')) packageManager = 'yarn'
+  else if (has('pnpm-lock.yaml')) packageManager = 'pnpm'
+  else if (has('package-lock.json')) packageManager = 'npm'
 
   // ── Node.js ────────────────────────────────────────────────────────────────
-  if (hasFile(files, 'package.json')) {
+  if (has('package.json')) {
     language = 'nodejs'
-    const pkg = parseJson(content(files, 'package.json'))
+    const pkg = parseJson(get('package.json'))
 
     if (pkg) {
       const scripts = (pkg.scripts as Record<string, string>) ?? {}
@@ -70,7 +100,7 @@ export function detectStack(files: Map<string, string>): StackResult {
       if (hasDep(deps, 'next')) {
         framework = 'nextjs'
         appType = 'fullstack'
-      } else if (hasDep(deps, 'vite') || hasFile(files, 'vite.config.ts') || hasFile(files, 'vite.config.js') || hasFile(files, 'vite.config.mjs')) {
+      } else if (hasDep(deps, 'vite') || has('vite.config.ts') || has('vite.config.js') || has('vite.config.mjs')) {
         framework = 'vite'
         appType = 'web'
       } else if (hasDep(deps, '@nestjs/core')) {
@@ -112,35 +142,35 @@ export function detectStack(files: Map<string, string>): StackResult {
   }
 
   // ── next.config.* overrides framework ──────────────────────────────────────
-  if (hasFile(files, 'next.config.js') || hasFile(files, 'next.config.mjs') || hasFile(files, 'next.config.ts')) {
+  if (has('next.config.js') || has('next.config.mjs') || has('next.config.ts')) {
     framework = 'nextjs'
     if (language === 'unknown') language = 'nodejs'
     appType = 'fullstack'
   }
 
   // ── Python ─────────────────────────────────────────────────────────────────
-  if (language === 'unknown' && (hasFile(files, 'requirements.txt') || hasFile(files, 'pyproject.toml') || hasFile(files, 'Pipfile'))) {
+  if (language === 'unknown' && (has('requirements.txt') || has('pyproject.toml') || has('Pipfile'))) {
     language = 'python'
     appType = 'api'
 
-    const reqs = content(files, 'requirements.txt') + content(files, 'pyproject.toml')
+    const reqs = get('requirements.txt') + get('pyproject.toml')
     if (/\bfastapi\b/i.test(reqs)) framework = 'fastapi'
     else if (/\bflask\b/i.test(reqs)) framework = 'flask'
     else if (/\bdjango\b/i.test(reqs)) framework = 'django'
     else if (/\bstarlette\b/i.test(reqs)) framework = 'starlette'
 
-    if (hasFile(files, 'Pipfile')) packageManager = 'pipenv'
-    else if (hasFile(files, 'pyproject.toml') && content(files, 'pyproject.toml').includes('[tool.poetry]')) packageManager = 'poetry'
+    if (has('Pipfile')) packageManager = 'pipenv'
+    else if (has('pyproject.toml') && get('pyproject.toml').includes('[tool.poetry]')) packageManager = 'poetry'
     else packageManager = 'pip'
 
     hasDatabase = /\bsqlalchemy\b|\bpsycopg\b|\bpymongo\b|\bmysql\b/i.test(reqs)
   }
 
   // ── Go ─────────────────────────────────────────────────────────────────────
-  if (language === 'unknown' && hasFile(files, 'go.mod')) {
+  if (language === 'unknown' && has('go.mod')) {
     language = 'go'
     appType = 'api'
-    const goMod = content(files, 'go.mod')
+    const goMod = get('go.mod')
     if (/gin-gonic\/gin/.test(goMod)) framework = 'gin'
     else if (/labstack\/echo/.test(goMod)) framework = 'echo'
     else if (/gofiber\/fiber/.test(goMod)) framework = 'fiber'
@@ -149,22 +179,22 @@ export function detectStack(files: Map<string, string>): StackResult {
   }
 
   // ── Java ───────────────────────────────────────────────────────────────────
-  if (language === 'unknown' && (hasFile(files, 'pom.xml') || hasFile(files, 'build.gradle'))) {
+  if (language === 'unknown' && (has('pom.xml') || has('build.gradle'))) {
     language = 'java'
     appType = 'api'
-    const build = content(files, 'pom.xml') + content(files, 'build.gradle')
+    const build = get('pom.xml') + get('build.gradle')
     if (/spring-boot/i.test(build)) framework = 'spring-boot'
     hasDatabase = /postgresql|mysql|h2database|hibernate/i.test(build)
-    packageManager = hasFile(files, 'pom.xml') ? 'maven' : 'gradle'
+    packageManager = has('pom.xml') ? 'maven' : 'gradle'
   }
 
-  // ── Dockerfile / Compose ───────────────────────────────────────────────────
-  const hasDockerfile = hasFile(files, 'Dockerfile') || hasFile(files, 'dockerfile')
-  const hasDockerCompose = hasFile(files, 'docker-compose.yml') || hasFile(files, 'docker-compose.yaml')
+  // ── Dockerfile / Compose (check app root and repo root) ─────────────────────
+  const hasDockerfile = has('Dockerfile') || has('dockerfile')
+  const hasDockerCompose = has('docker-compose.yml') || has('docker-compose.yaml')
 
   // If compose has db services, mark hasDatabase
   if (hasDockerCompose) {
-    const compose = content(files, 'docker-compose.yml') + content(files, 'docker-compose.yaml')
+    const compose = get('docker-compose.yml') + get('docker-compose.yaml')
     if (/postgres|mysql|mongo|redis/i.test(compose)) hasDatabase = true
   }
 
