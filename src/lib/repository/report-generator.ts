@@ -4,8 +4,8 @@ import type { AzureAssessment } from './azure-assessor'
 
 function suitabilityLabel(s: AzureAssessment['suitability']): string {
   switch (s) {
-    case 'suitable':             return 'Suitable for Azure deployment'
-    case 'suitable_with_changes': return 'Suitable with configuration changes required'
+    case 'suitable':             return 'Ready for cloud deployment'
+    case 'suitable_with_changes': return 'Ready with configuration changes required'
     case 'requires_containers':  return 'Requires container-based deployment (Dockerfile detected)'
     case 'unsupported':          return 'Unable to assess — runtime could not be detected'
   }
@@ -17,7 +17,100 @@ function scoreLabel(score: number): string {
   return 'Low'
 }
 
-export function generateAdminDocument(
+function providerLabel(provider: string): string {
+  switch (provider) {
+    case 'azure': return 'Microsoft Azure'
+    case 'aws':   return 'Amazon Web Services'
+    case 'gcp':   return 'Google Cloud'
+    default:      return provider
+  }
+}
+
+/**
+ * Plain-language narrative for stakeholders. Answers: what was delivered, what
+ * the app appears to do, what it needs to run, and whether it is ready for
+ * cloud installation — without deep technical detail.
+ */
+export function generateStakeholderReport(
+  repositoryName: string,
+  provider: string,
+  stack: StackResult,
+  envVars: EnvVariable[],
+  assessment: AzureAssessment
+): string {
+  const today = new Date().toISOString().split('T')[0]
+  const fwLabel = stack.framework !== 'unknown' ? stack.framework : stack.language
+  const secrets = envVars.filter((v) => v.classification === 'secret')
+  const lines: string[] = []
+
+  lines.push(`# Handover Report — ${repositoryName}`)
+  lines.push('')
+  lines.push(`**Prepared:** ${today}`)
+  lines.push(`**Target cloud:** ${providerLabel(provider)}`)
+  lines.push(`**Cloud Readiness:** ${assessment.azureReadinessScore}/100 (${scoreLabel(assessment.azureReadinessScore)})`)
+  lines.push('')
+  lines.push('---')
+  lines.push('')
+
+  lines.push('## What was delivered')
+  lines.push('')
+  lines.push(`The repository **${repositoryName}** was handed over as a ZIP package and inspected automatically. It is a **${stack.appType}** application built with **${fwLabel}**.`)
+  lines.push('')
+
+  lines.push('## What it needs to run')
+  lines.push('')
+  const reqServices = assessment.services.filter((s) => s.required)
+  if (reqServices.length > 0) {
+    lines.push('To run in the cloud, this application requires:')
+    lines.push('')
+    for (const svc of reqServices) {
+      lines.push(`- **${svc.name.replace('Azure ', '')}** — ${svc.reason}`)
+    }
+  } else {
+    lines.push('No additional cloud services beyond basic hosting were detected.')
+  }
+  lines.push('')
+  if (secrets.length > 0) {
+    lines.push(`It also uses **${secrets.length} secret value(s)** (such as API keys or passwords) that must be supplied securely before go-live.`)
+    lines.push('')
+  }
+
+  lines.push('## Is it ready?')
+  lines.push('')
+  lines.push(`**${suitabilityLabel(assessment.suitability)}.**`)
+  lines.push('')
+  if (assessment.blockers.length > 0) {
+    lines.push(`There are **${assessment.blockers.length} blocker(s)** that must be resolved before deployment:`)
+    lines.push('')
+    for (const b of assessment.blockers) {
+      lines.push(`- ${b}`)
+    }
+  } else {
+    lines.push('No critical blockers were found. Some configuration is still required before go-live.')
+  }
+  lines.push('')
+
+  if (assessment.risks.length > 0) {
+    lines.push('## Things to be aware of')
+    lines.push('')
+    for (const r of assessment.risks) {
+      lines.push(`- ${r}`)
+    }
+    lines.push('')
+  }
+
+  lines.push('---')
+  lines.push('')
+  lines.push('_A detailed installation guide for infrastructure engineers accompanies this report._')
+
+  return lines.join('\n')
+}
+
+/**
+ * The technical installation guide for infrastructure engineers (formerly the
+ * "Azure Administrator Installation Document").
+ */
+export function generateEngineerReport(
   repositoryName: string,
   stack: StackResult,
   envVars: EnvVariable[],
@@ -36,10 +129,10 @@ export function generateAdminDocument(
 
   const lines: string[] = []
 
-  lines.push(`# Azure Installation Document — ${repositoryName}`)
+  lines.push(`# Engineer Install Guide — ${repositoryName}`)
   lines.push('')
   lines.push(`**Prepared:** ${today}`)
-  lines.push(`**Readiness Score:** ${assessment.azureReadinessScore}/100 (${scoreLabel(assessment.azureReadinessScore)})`)
+  lines.push(`**Cloud Readiness Score:** ${assessment.azureReadinessScore}/100 (${scoreLabel(assessment.azureReadinessScore)})`)
   lines.push(`**Suitability:** ${suitabilityLabel(assessment.suitability)}`)
   lines.push(`**Recommended Path:** ${assessment.recommendedPath}`)
   lines.push('')
@@ -50,9 +143,9 @@ export function generateAdminDocument(
   lines.push('## 1. Executive Summary')
   lines.push('')
   const fwLabel = stack.framework !== 'unknown' ? stack.framework : stack.language
-  lines.push(`This document provides Azure installation guidance for the **${repositoryName}** repository. The application is built with **${fwLabel}** and is assessed as: **${suitabilityLabel(assessment.suitability)}**.`)
+  lines.push(`This guide provides cloud installation steps for the **${repositoryName}** repository. The application is built with **${fwLabel}** and is assessed as: **${suitabilityLabel(assessment.suitability)}**.`)
   lines.push('')
-  lines.push(`**Azure Readiness Score: ${assessment.azureReadinessScore}/100**`)
+  lines.push(`**Cloud Readiness Score: ${assessment.azureReadinessScore}/100**`)
   lines.push('')
   if (assessment.blockers.length > 0) {
     lines.push(`> **Action Required:** ${assessment.blockers.length} critical blocker(s) must be resolved before deployment.`)
@@ -61,7 +154,7 @@ export function generateAdminDocument(
     lines.push('No critical blockers were identified. Configuration changes are needed before deployment.')
     lines.push('')
   }
-  lines.push(`The minimum viable Azure architecture requires: **${assessment.recommendedPath}**.`)
+  lines.push(`The minimum viable cloud architecture requires: **${assessment.recommendedPath}**.`)
   lines.push('')
   lines.push('---')
   lines.push('')
@@ -98,8 +191,8 @@ export function generateAdminDocument(
   lines.push('---')
   lines.push('')
 
-  // ── 4. Recommended Azure Architecture ────────────────────────────────────
-  lines.push('## 4. Recommended Azure Architecture')
+  // ── 4. Recommended Cloud Architecture ────────────────────────────────────
+  lines.push('## 4. Recommended Cloud Architecture')
   lines.push('')
   lines.push(`**Recommended path:** ${assessment.recommendedPath}`)
   lines.push('')
@@ -113,8 +206,8 @@ export function generateAdminDocument(
   lines.push('---')
   lines.push('')
 
-  // ── 5. Required Azure Services ────────────────────────────────────────────
-  lines.push('## 5. Required Azure Services')
+  // ── 5. Required Cloud Services ────────────────────────────────────────────
+  lines.push('## 5. Required Cloud Services')
   lines.push('')
   const reqServices = assessment.services.filter((s) => s.required)
   const optServices = assessment.services.filter((s) => !s.required)
@@ -359,7 +452,7 @@ export function generateAdminDocument(
   lines.push('')
   lines.push('---')
   lines.push('')
-  lines.push('_Document generated by RapidMVP Architecture Governance Platform._')
+  lines.push('_Engineer install guide generated by RapidMVP._')
 
   return lines.join('\n')
 }

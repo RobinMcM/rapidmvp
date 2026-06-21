@@ -3,8 +3,8 @@ import Link from 'next/link'
 const CONTACT_EMAIL = 'mailto:hello@rapidmvp.io'
 
 const platformLinks = [
-  { href: '/#register', label: 'Analyse a repository' },
-  { href: '/workspace', label: 'Workspace' },
+  { href: '/repositories/new', label: 'Upload a repository' },
+  { href: '/repositories', label: 'Repositories' },
 ]
 
 const companyLinks = [
@@ -96,13 +96,13 @@ export default function Footer() {
               Get started
             </h3>
             <p className="text-sm text-slate-500 mb-4">
-              Design your cloud platform architecture with the RapidMVP AI Architect.
+              Give RapidMVP your repository ZIP — we inspect it and help install it into the cloud.
             </p>
             <Link
-              href="#register"
+              href="/repositories/new"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold bg-azure text-white hover:bg-azure-600 transition-colors"
             >
-              Analyse a repository
+              Upload your repository
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

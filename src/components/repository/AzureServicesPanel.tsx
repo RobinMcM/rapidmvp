@@ -14,8 +14,8 @@ type Props = {
 }
 
 const SUIT_LABEL: Record<string, string> = {
-  suitable:             'Suitable for Azure deployment',
-  suitable_with_changes:'Suitable with configuration changes',
+  suitable:             'Ready for cloud deployment',
+  suitable_with_changes:'Ready with configuration changes',
   requires_containers:  'Requires container-based deployment',
   unsupported:          'Runtime not detected',
 }
@@ -45,7 +45,7 @@ export default function AzureServicesPanel({ recommendedPath, suitability, servi
       {/* Required services */}
       <div className="rounded-xl bg-rm-dark-2/70 border border-slate-800 overflow-hidden">
         <div className="px-5 py-3 border-b border-slate-800">
-          <span className="text-slate-300 font-semibold text-sm">Required Azure Services</span>
+          <span className="text-slate-300 font-semibold text-sm">Required Cloud Services</span>
         </div>
         <div className="divide-y divide-slate-800/50">
           {reqServices.map((svc) => (

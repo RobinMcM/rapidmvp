@@ -69,7 +69,7 @@ export default function TechnologyPillars() {
             Four pillars of modern cloud engineering
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto">
-            Every RapidMVP architecture session draws on expertise across AI, cloud, edge and platform engineering to produce a holistic solution.
+            Every RapidMVP inspection draws on expertise across AI, cloud, edge and platform engineering to produce a holistic cloud installation plan.
           </p>
         </div>
 

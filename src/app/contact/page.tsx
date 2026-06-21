@@ -4,7 +4,7 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Contact — RapidMVP',
   description:
-    'Start an architecture session or contact the RapidMVP team. Two pathways for organisations ready to design their cloud platform.',
+    'Upload a repository or contact the RapidMVP team. Two pathways for organisations ready to install delivered software into the cloud.',
 }
 
 const CONTACT_EMAIL = 'hello@rapidmvp.io'
@@ -33,7 +33,7 @@ export default function ContactPage() {
       <div className="bg-rm-dark py-20 px-6">
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
 
-          {/* Pathway 1: Architecture Session */}
+          {/* Pathway 1: Upload a repository */}
           <div className="rounded-xl border border-azure/30 bg-azure/5 p-8 flex flex-col gap-5 card-glow-azure">
             <div className="w-12 h-12 rounded-xl bg-azure/15 text-azure flex items-center justify-center">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
@@ -43,19 +43,19 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <h2 className="text-white font-bold text-xl mb-2">Start Architecture Session</h2>
+              <h2 className="text-white font-bold text-xl mb-2">Upload your repository</h2>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Register for platform access and start working with the RapidMVP AI Architect
-                immediately. Describe your platform goals and receive a tailored architecture
-                recommendation.
+                Register for platform access and upload your repository ZIP immediately. RapidMVP
+                inspects it and turns it into a cloud installation plan with a stakeholder handover
+                report.
               </p>
             </div>
 
             <ul className="space-y-2">
               {[
                 'Immediate access after registration',
-                'AI-assisted requirement discovery',
-                'Complete platform blueprint output',
+                'Automatic stack & secrets detection',
+                'Azure cloud installation blueprint',
                 'No sales process required',
               ].map((item) => (
                 <li key={item} className="flex items-center gap-2 text-sm text-slate-300">
@@ -71,7 +71,7 @@ export default function ContactPage() {
               href="/#register"
               className="mt-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg font-semibold text-sm bg-azure text-white hover:bg-azure-600 hover:-translate-y-0.5 transition-all shadow-md shadow-azure/25"
             >
-              Start Architecture Session
+              Upload your repository
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -133,20 +133,20 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
               {
-                q: 'How long does an architecture session take?',
-                a: 'Sessions are self-paced. Initial discovery typically takes 30–60 minutes. Blueprint generation happens progressively as requirements are captured.',
+                q: 'How long does an inspection take?',
+                a: 'Inspection is automatic and typically completes in seconds after the repository ZIP finishes uploading. The cloud installation blueprint and readiness score are generated immediately.',
               },
               {
-                q: 'Do we need technical staff to participate?',
-                a: 'The AI Architect is designed to work with both technical and non-technical stakeholders. Technical leads will find more depth; product teams can still extract meaningful architectural direction.',
+                q: 'Do we need technical staff to use it?',
+                a: 'No. Stakeholders get a plain-language handover report explaining what was delivered and whether it is ready. Infrastructure engineers get the detailed install guide.',
               },
               {
-                q: 'What happens after we receive a blueprint?',
-                a: 'The blueprint is yours to take to your engineering team. RapidMVP can also provide implementation support, advisory reviews and ongoing architecture guidance as optional follow-on engagements.',
+                q: 'What happens after the blueprint is generated?',
+                a: 'Infrastructure engineers follow the cloud installation guide to install the software into Azure. AWS and Google Cloud support are on the roadmap.',
               },
               {
-                q: 'Is our information kept confidential?',
-                a: 'All session data is stored securely. We do not share client requirements, architecture outputs or platform details with third parties.',
+                q: 'Is our repository kept confidential?',
+                a: 'Repository ZIPs and inspection results are stored securely and scoped to your account. We do not share your code, configuration or reports with third parties.',
               },
             ].map(({ q, a }) => (
               <div key={q} className="rounded-xl border border-slate-800 bg-rm-dark-2/40 p-6">

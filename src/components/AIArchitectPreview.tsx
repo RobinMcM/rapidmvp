@@ -114,10 +114,10 @@ export default function AIArchitectPreview() {
             </ul>
 
             <Link
-              href="#register"
+              href="/repositories/new"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm bg-azure text-white hover:bg-azure-600 hover:-translate-y-0.5 transition-all shadow-md shadow-azure/25"
             >
-              Start Your Architecture Session
+              Upload your repository
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

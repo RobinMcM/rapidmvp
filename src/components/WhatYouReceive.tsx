@@ -109,13 +109,14 @@ export default function WhatYouReceive() {
       <div className="max-w-7xl mx-auto">
 
         <div className="text-center mb-14">
-          <p className="label-mono text-azure mb-4">Architecture Session Output</p>
+          <p className="label-mono text-azure mb-4">Handover Output</p>
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-            What you receive after every session
+            What you receive after every inspection
           </h2>
           <p className="text-slate-400 max-w-2xl mx-auto text-lg">
-            Every architecture session with RapidMVP produces a complete, implementation-ready
-            platform blueprint. No ambiguity. No hand-waving. Tangible outputs your team can act on.
+            Every repository ZIP you upload produces a complete, implementation-ready cloud
+            installation blueprint and handover report. No ambiguity. No hand-waving. Tangible
+            outputs your team can act on.
           </p>
         </div>
 
@@ -143,10 +144,10 @@ export default function WhatYouReceive() {
             Exportable as PDF, Markdown and shareable team links — ready for stakeholder review and engineering handoff.
           </p>
           <a
-            href="#register"
+            href="/repositories/new"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm bg-azure text-white hover:bg-azure-600 hover:-translate-y-0.5 transition-all shadow-md shadow-azure/20"
           >
-            Request Your Architecture Blueprint
+            Upload your repository
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>

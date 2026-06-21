@@ -80,7 +80,7 @@ const DOCUMENT_MAX_BYTES: Record<string, number> = {
 const DEFAULT_DOC_MAX_BYTES = 20 * 1024 * 1024
 
 export async function generateDocumentUploadUrl(input: {
-  blueprintId: string
+  repositoryId: string
   documentId: string
   fileName: string
   fileType: string
@@ -93,7 +93,7 @@ export async function generateDocumentUploadUrl(input: {
   }
 
   const maxBytes = DOCUMENT_MAX_BYTES[input.fileType] ?? DEFAULT_DOC_MAX_BYTES
-  const spacesKey = `documents/${input.blueprintId}/${input.documentId}/${input.fileName}`
+  const spacesKey = `documents/${input.repositoryId}/${input.documentId}/${input.fileName}`
 
   const command = new PutObjectCommand({
     Bucket: config.bucket,

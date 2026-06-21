@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
 import { prisma } from '../../../../../lib/db'
-import { requireWorkspaceUser, requireBlueprintOwnership } from '../../../../../lib/server/workspace-access'
+import { requireAccountUser, requireRepositoryOwnership } from '../../../../../lib/server/account-access'
 import { generateDocumentUploadUrl } from '../../../../../lib/server/spaces'
 import { HttpError } from '../../../../../lib/server/http'
 
@@ -9,32 +9,35 @@ export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
   try {
-    const { dbUser } = await requireWorkspaceUser()
+    const { dbUser } = await requireAccountUser()
     const body = await request.json()
-    const { blueprintId, fileName, fileType } = body as {
-      blueprintId: string
+    const { repositoryId, fileName, fileType } = body as {
+      repositoryId: string
       fileName: string
       fileType: string
     }
 
-    if (!blueprintId || !fileName || !fileType) {
-      return NextResponse.json({ error: 'blueprintId, fileName, fileType required' }, { status: 400 })
+    if (!repositoryId || !fileName || !fileType) {
+      return NextResponse.json({ error: 'repositoryId, fileName, fileType required' }, { status: 400 })
     }
 
-    await requireBlueprintOwnership(blueprintId, dbUser.id)
+    await requireRepositoryOwnership(repositoryId, dbUser.id)
 
     const documentId = randomUUID()
     const { presignedUrl, spacesKey, expiresIn, maxBytes } = await generateDocumentUploadUrl({
-      blueprintId,
+      repositoryId,
       documentId,
       fileName,
       fileType,
     })
 
+    // A repository package owns exactly one ZIP — replace any previous upload.
+    await prisma.documentUpload.deleteMany({ where: { repositoryPackageId: repositoryId } })
+
     await prisma.documentUpload.create({
       data: {
         id: documentId,
-        clientBlueprintId: blueprintId,
+        repositoryPackageId: repositoryId,
         fileName,
         fileType,
         spacesKey,

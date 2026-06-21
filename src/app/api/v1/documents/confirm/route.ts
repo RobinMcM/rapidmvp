@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../../../lib/db'
-import { requireWorkspaceUser } from '../../../../../lib/server/workspace-access'
+import { requireAccountUser } from '../../../../../lib/server/account-access'
 import { HttpError } from '../../../../../lib/server/http'
 
 export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
   try {
-    const { dbUser } = await requireWorkspaceUser()
+    const { dbUser } = await requireAccountUser()
     const body = await request.json()
     const { documentId } = body as { documentId: string }
 
@@ -17,10 +17,10 @@ export async function POST(request: NextRequest) {
 
     const doc = await prisma.documentUpload.findUnique({
       where: { id: documentId },
-      include: { blueprint: { include: { client: true } } },
+      include: { repositoryPackage: { include: { account: true } } },
     })
 
-    if (!doc || doc.blueprint.client.userId !== dbUser.id) {
+    if (!doc || !doc.repositoryPackage || doc.repositoryPackage.account.userId !== dbUser.id) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 })
     }
 
@@ -28,6 +28,14 @@ export async function POST(request: NextRequest) {
       where: { id: documentId },
       data: { parseStatus: 'uploaded' },
     })
+
+    // Name the repository after the uploaded ZIP (unless already named).
+    if (doc.repositoryPackage.name === 'Untitled repository') {
+      await prisma.repositoryPackage.update({
+        where: { id: doc.repositoryPackage.id },
+        data: { name: doc.fileName.replace(/\.zip$/i, '') },
+      })
+    }
 
     return NextResponse.json({ ok: true })
   } catch (err) {

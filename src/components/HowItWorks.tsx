@@ -1,33 +1,33 @@
 const steps = [
   {
     number: '01',
-    title: 'Start Architecture Session',
+    title: 'Upload the repository ZIP',
     description:
-      'Describe your business goals, current platform and growth ambitions. The AI Architect listens, asks clarifying questions and maps your requirements.',
+      'Hand over the delivered software as a repository ZIP file. The ZIP is the single source of truth — no access to private systems required.',
   },
   {
     number: '02',
-    title: 'Collaborative Discovery',
+    title: 'Inspect what was delivered',
     description:
-      'The AI Architect works alongside your team to uncover constraints, compliance requirements, team structure and technical context that shape the right architecture.',
+      'RapidMVP inspects the contents, detects the application stack, runtime, frameworks, database, storage, authentication and external services.',
   },
   {
     number: '03',
-    title: 'Platform Blueprint Generation',
+    title: 'Generate the cloud installation blueprint',
     description:
-      'A tailored architecture recommendation is produced — covering Azure services, Cloudflare design, security model, AI opportunities and deployment topology.',
+      'Required Azure resources, secrets and configuration are mapped automatically, with a cloud readiness score and any blockers surfaced before deployment.',
   },
   {
     number: '04',
-    title: 'Review and Refine',
+    title: 'Configure secrets & install into Azure',
     description:
-      'Your technical leads and stakeholders review the blueprint. Questions are answered, trade-offs discussed and the architecture refined until alignment is reached.',
+      'Infrastructure engineers get a step-by-step install guide — environment variables, Key Vault references and deployment steps to install it into the cloud.',
   },
   {
     number: '05',
-    title: 'Implementation Planning',
+    title: 'Produce the stakeholder handover report',
     description:
-      'A phased implementation roadmap, Infrastructure as Code guidance and DevOps strategy give your engineering team a clear path from architecture to delivery.',
+      'A plain-language handover report tells stakeholders what was delivered, what it does and whether it is ready — closing the gap between teams.',
   },
 ]
 
@@ -42,8 +42,8 @@ export default function HowItWorks() {
             How RapidMVP works
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto">
-            A structured, collaborative process that takes you from requirements to
-            a production-ready architecture blueprint.
+            A structured process that takes you from a delivered repository ZIP to a
+            cloud installation plan and a stakeholder-ready handover report.
           </p>
         </div>
 
@@ -87,11 +87,11 @@ export default function HowItWorks() {
         {/* Key differentiator */}
         <div className="mt-14 rounded-xl border border-azure/20 bg-azure/5 px-8 py-7 text-center">
           <p className="text-white font-semibold text-xl mb-2">
-            We work with your team, not instead of your team.
+            The repository ZIP is the handover artefact.
           </p>
           <p className="text-slate-400 max-w-lg mx-auto">
-            RapidMVP augments your engineers and technical leadership — providing architecture
-            expertise and AI-assisted discovery that accelerates alignment, not replaces it.
+            RapidMVP closes the trust and communication gap between stakeholders, development teams
+            and infrastructure engineers — everyone works from the same delivered software.
           </p>
         </div>
 

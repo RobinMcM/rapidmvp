@@ -32,10 +32,10 @@ export default async function AccountPage() {
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Link
-            href="/workspace"
+            href="/repositories"
             className="inline-flex items-center rounded-lg bg-gradient-to-r from-[#3b82f6] to-[#7c3aed] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
           >
-            Go to workspace
+            Go to repositories
           </Link>
           <SignOutButton />
         </div>

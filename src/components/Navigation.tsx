@@ -90,15 +90,13 @@ export default function Navigation() {
           {sessionExists ? (
             <>
               <Link
-                href="/workspace"
+                href="/repositories"
                 className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                  pathname.startsWith('/workspace')
+                  pathname.startsWith("/repositories")
                     ? 'text-white bg-slate-800/70'
                     : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
                 }`}
-              >
-                Workspace
-              </Link>
+              >Repositories</Link>
               <Link
                 href="/account"
                 className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
@@ -126,11 +124,9 @@ export default function Navigation() {
             </Link>
           )}
           <Link
-            href="#register"
+            href="/repositories/new"
             className="px-4 py-2 rounded-lg text-sm font-semibold bg-azure text-white hover:bg-azure-600 hover:-translate-y-px transition-all shadow-sm shadow-azure/20"
-          >
-            Analyse a repository
-          </Link>
+          >Upload your repository</Link>
         </div>
 
         {/* Mobile hamburger */}
@@ -172,12 +168,10 @@ export default function Navigation() {
             {sessionExists ? (
               <>
                 <Link
-                  href="/workspace"
+                  href="/repositories"
                   className="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors"
                   onClick={() => setMobileOpen(false)}
-                >
-                  Workspace
-                </Link>
+                >Repositories</Link>
                 <Link
                   href="/account"
                   className="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors"
@@ -203,12 +197,10 @@ export default function Navigation() {
               </Link>
             )}
             <Link
-              href="#register"
+              href="/repositories/new"
               className="mt-1 px-4 py-2.5 rounded-lg text-sm font-semibold bg-azure text-white text-center hover:bg-azure-600 transition-colors"
               onClick={() => setMobileOpen(false)}
-            >
-              Analyse a repository
-            </Link>
+            >Upload your repository</Link>
           </div>
         </div>
       )}

@@ -89,8 +89,8 @@ export default function RegistrationSection() {
           </div>
           <h2 className="text-2xl font-bold text-white mb-3">Access confirmed</h2>
           <p className="text-slate-400 mb-8">
-            Thank you, <strong className="text-white">{form.name}</strong>. Your architecture session
-            request has been received. The RapidMVP AI Architect is ready when you are.
+            Thank you, <strong className="text-white">{form.name}</strong>. Your platform access
+            request has been received. Upload your repository ZIP when you are ready.
           </p>
           <a
             href="/auth"
@@ -129,8 +129,8 @@ export default function RegistrationSection() {
               Access the AI Architecture Assistant
             </h2>
             <p className="text-slate-400 text-lg">
-              Registration opens access to the RapidMVP platform. Start your first
-              architecture session immediately after sign-up.
+              Registration opens access to the RapidMVP platform. Upload your first
+              repository ZIP immediately after sign-up.
             </p>
           </div>
 
@@ -250,7 +250,7 @@ export default function RegistrationSection() {
                   </>
                 ) : (
                   <>
-                    Request Architecture Session Access
+                    Request Platform Access
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>

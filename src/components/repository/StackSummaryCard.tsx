@@ -6,13 +6,14 @@ type Props = {
   buildCommand: string | null
   startCommand: string | null
   appType: string | null
-  azureReadinessScore: number
-  suitability: string
+  azureReadinessScore?: number
+  suitability?: string
+  showScore?: boolean
 }
 
 const SUITABILITY_STYLES: Record<string, { bg: string; text: string; label: string }> = {
-  suitable:             { bg: 'bg-emerald-900/40', text: 'text-emerald-400', label: 'Suitable' },
-  suitable_with_changes:{ bg: 'bg-amber-900/40',   text: 'text-amber-400',   label: 'Suitable with changes' },
+  suitable:             { bg: 'bg-emerald-900/40', text: 'text-emerald-400', label: 'Cloud ready' },
+  suitable_with_changes:{ bg: 'bg-amber-900/40',   text: 'text-amber-400',   label: 'Ready with changes' },
   requires_containers:  { bg: 'bg-blue-900/40',    text: 'text-blue-400',    label: 'Requires containers' },
   unsupported:          { bg: 'bg-red-900/40',      text: 'text-red-400',     label: 'Runtime not detected' },
 }
@@ -39,7 +40,8 @@ function Row({ label, value }: { label: string; value: string | null }) {
 }
 
 export default function StackSummaryCard(props: Props) {
-  const suit = SUITABILITY_STYLES[props.suitability] ?? SUITABILITY_STYLES.unsupported
+  const showScore = props.showScore ?? true
+  const suit = props.suitability ? SUITABILITY_STYLES[props.suitability] ?? SUITABILITY_STYLES.unsupported : null
 
   return (
     <div className="rounded-xl bg-rm-dark-2/70 border border-slate-800 p-5 flex flex-col gap-4">
@@ -48,15 +50,19 @@ export default function StackSummaryCard(props: Props) {
           <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 mb-0.5">Repository</p>
           <h3 className="text-white font-semibold text-base">{props.repositoryName}</h3>
         </div>
-        <span className={`px-2.5 py-1 rounded text-xs font-semibold flex-shrink-0 ${suit.bg} ${suit.text}`}>
-          {suit.label}
-        </span>
+        {suit && (
+          <span className={`px-2.5 py-1 rounded text-xs font-semibold flex-shrink-0 ${suit.bg} ${suit.text}`}>
+            {suit.label}
+          </span>
+        )}
       </div>
 
-      <div>
-        <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 mb-2">Azure Readiness Score</p>
-        <ScoreBar score={props.azureReadinessScore} />
-      </div>
+      {showScore && typeof props.azureReadinessScore === 'number' && (
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 mb-2">Cloud Readiness Score</p>
+          <ScoreBar score={props.azureReadinessScore} />
+        </div>
+      )}
 
       <div className="flex flex-col">
         <Row label="Stack"           value={props.detectedStack} />
