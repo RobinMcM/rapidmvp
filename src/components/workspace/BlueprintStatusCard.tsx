@@ -17,7 +17,7 @@ const statusColour: Record<string, string> = {
 export default function BlueprintStatusCard({ id, title, slug, status, createdAt }: Props) {
   return (
     <Link
-      href={`/workspace/blueprints/${id}/assessment`}
+      href={`/workspace/blueprints/${id}/repository-install`}
       className="rounded-xl bg-rm-dark-2/70 border border-slate-800 hover:border-azure/40 hover:card-glow-azure transition-all duration-300 p-5 flex flex-col gap-3 group"
     >
       <div className="flex items-start justify-between gap-2">
@@ -32,7 +32,7 @@ export default function BlueprintStatusCard({ id, title, slug, status, createdAt
         <h3 className="text-white font-semibold text-sm group-hover:text-azure-300 transition-colors">{title}</h3>
         <p className="text-slate-500 text-[11px] font-mono mt-0.5">{slug}</p>
       </div>
-      <span className="text-azure text-xs font-medium mt-auto">View Blueprint →</span>
+      <span className="text-azure text-xs font-medium mt-auto">View analysis →</span>
     </Link>
   )
 }

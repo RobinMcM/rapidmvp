@@ -23,22 +23,22 @@ export default function WorkspaceDashboard({ email, company, blueprints }: Props
 
         {/* Welcome panel */}
         <WorkspaceCard className="p-6 flex flex-col gap-2">
-          <p className="font-mono text-[10px] uppercase tracking-wider text-azure mb-1">Architecture Workspace</p>
+          <p className="font-mono text-[10px] uppercase tracking-wider text-azure mb-1">Workspace</p>
           <h1 className="text-2xl font-bold text-white">Welcome back</h1>
           <p className="text-slate-400 text-sm">
             {company ? `${company} · ` : ''}<span className="font-mono">{email}</span>
           </p>
         </WorkspaceCard>
 
-        {/* Blueprints */}
+        {/* Repository analyses */}
         <section>
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-white font-semibold text-lg">Architecture Sessions</h2>
+            <h2 className="text-white font-semibold text-lg">Repository Analyses</h2>
             <Link
               href="/workspace/vision"
               className="px-4 py-2 rounded-lg bg-azure text-white text-sm font-semibold hover:bg-azure-600 transition-colors shadow-sm shadow-azure/20"
             >
-              + New Session
+              + New analysis
             </Link>
           </div>
 
@@ -50,16 +50,16 @@ export default function WorkspaceDashboard({ email, company, blueprints }: Props
                 </svg>
               </div>
               <div>
-                <h3 className="text-white font-semibold mb-1">No architecture sessions yet</h3>
+                <h3 className="text-white font-semibold mb-1">No repository analyses yet</h3>
                 <p className="text-slate-400 text-sm max-w-sm">
-                  Start your first architecture session to generate a Blueprint tailored to your requirements.
+                  Upload a repository to detect its stack, map its secrets, and generate Azure deployment guidance.
                 </p>
               </div>
               <Link
                 href="/workspace/vision"
                 className="px-5 py-2.5 rounded-lg bg-azure text-white text-sm font-semibold hover:bg-azure-600 transition-colors"
               >
-                Start your first Architecture Session
+                Analyse your first repository
               </Link>
             </WorkspaceCard>
           ) : (

@@ -58,16 +58,16 @@ export default function Hero() {
             href="#register"
             className="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg font-semibold text-base bg-azure text-white hover:bg-azure-600 hover:-translate-y-0.5 transition-all shadow-lg shadow-azure/25"
           >
-            Start Architecture Session
+            Analyse a repository
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </Link>
           <Link
-            href="/blueprints"
+            href="/contact"
             className="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg font-semibold text-base border border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white hover:-translate-y-0.5 transition-all"
           >
-            View Example Blueprints
+            Talk to us
           </Link>
         </div>
 

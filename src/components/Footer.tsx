@@ -3,9 +3,8 @@ import Link from 'next/link'
 const CONTACT_EMAIL = 'mailto:hello@rapidmvp.io'
 
 const platformLinks = [
-  { href: '/architecture-library', label: 'Architecture Library' },
-  { href: '/blueprints',           label: 'Blueprints' },
-  { href: '/insights',             label: 'Insights' },
+  { href: '/#register', label: 'Analyse a repository' },
+  { href: '/workspace', label: 'Workspace' },
 ]
 
 const companyLinks = [
@@ -103,7 +102,7 @@ export default function Footer() {
               href="#register"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold bg-azure text-white hover:bg-azure-600 transition-colors"
             >
-              Start Architecture Session
+              Analyse a repository
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

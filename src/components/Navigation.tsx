@@ -6,11 +6,8 @@ import Session from 'supertokens-auth-react/recipe/session'
 import { ensureFrontendSuperTokensInit } from '../lib/auth/supertokens-frontend'
 
 const navItems = [
-  { to: '/',                   label: 'Home' },
-  { to: '/architecture-library', label: 'Architecture Library' },
-  { to: '/blueprints',         label: 'Blueprints' },
-  { to: '/insights',           label: 'Insights' },
-  { to: '/contact',            label: 'Contact' },
+  { to: '/',        label: 'Home' },
+  { to: '/contact', label: 'Contact' },
 ]
 
 export default function Navigation() {
@@ -132,7 +129,7 @@ export default function Navigation() {
             href="#register"
             className="px-4 py-2 rounded-lg text-sm font-semibold bg-azure text-white hover:bg-azure-600 hover:-translate-y-px transition-all shadow-sm shadow-azure/20"
           >
-            Start Session
+            Analyse a repository
           </Link>
         </div>
 
@@ -210,7 +207,7 @@ export default function Navigation() {
               className="mt-1 px-4 py-2.5 rounded-lg text-sm font-semibold bg-azure text-white text-center hover:bg-azure-600 transition-colors"
               onClick={() => setMobileOpen(false)}
             >
-              Start Architecture Session
+              Analyse a repository
             </Link>
           </div>
         </div>

@@ -5,7 +5,6 @@ import type { ReactNode } from 'react'
 import { ensureSuperTokensInit } from '../../../../lib/auth/supertokens-backend'
 import { requireWorkspaceUser } from '../../../../lib/server/workspace-access'
 import { requireBlueprintOwnership } from '../../../../lib/server/workspace-access'
-import BlueprintSubNav from '../../../../components/workspace/BlueprintSubNav'
 
 export const runtime = 'nodejs'
 
@@ -36,7 +35,7 @@ export default async function BlueprintLayout({
       {/* Blueprint header */}
       <div className="bg-rm-dark border-b border-slate-800/60">
         <div className="max-w-7xl mx-auto px-6 py-5">
-          <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 mb-1">Architecture Blueprint</p>
+          <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 mb-1">Repository Analysis</p>
           <h1 className="text-white font-bold text-xl">{blueprint.title}</h1>
           <div className="flex items-center gap-3 mt-1">
             <span className="font-mono text-[11px] text-slate-500">{blueprint.slug}</span>
@@ -44,8 +43,6 @@ export default async function BlueprintLayout({
           </div>
         </div>
       </div>
-
-      <BlueprintSubNav blueprintId={id} />
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         {children}
