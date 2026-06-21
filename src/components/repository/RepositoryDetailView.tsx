@@ -5,6 +5,8 @@ import StackSummaryCard from './StackSummaryCard'
 import EnvVarsTable from './EnvVarsTable'
 import AzureServicesPanel from './AzureServicesPanel'
 import HandoverReportPanel from './HandoverReportPanel'
+import ConsistencyPanel from './ConsistencyPanel'
+import type { ConsistencyReport } from '../../lib/repository/consistency-checker'
 
 type EnvVariable = {
   name: string
@@ -33,6 +35,7 @@ export type RepositoryDetail = {
   startCommand: string | null
   appType: string | null
   envVariables: EnvVariable[]
+  consistency: ConsistencyReport | null
   // installation (Azure)
   installationId: string | null
   readinessScore: number | null
@@ -48,10 +51,11 @@ export type RepositoryDetail = {
   engineerMarkdown: string | null
 }
 
-type Tab = 'delivered' | 'installation' | 'handover'
+type Tab = 'delivered' | 'consistency' | 'installation' | 'handover'
 
 const TABS: { key: Tab; label: string }[] = [
   { key: 'delivered', label: 'Delivered' },
+  { key: 'consistency', label: 'Consistency' },
   { key: 'installation', label: 'Cloud Installation' },
   { key: 'handover', label: 'Handover Report' },
 ]
@@ -90,10 +94,12 @@ export default function RepositoryDetailView({ initial }: { initial: RepositoryD
         blockers: string[]
         risks: string[]
         installSteps: string[]
+        consistency: ConsistencyReport
       }
       setDetail((d) => ({
         ...d,
         status: 'inspected',
+        consistency: data.consistency,
         installationId: data.installationId,
         readinessScore: data.readinessScore,
         detectedStack: data.detectedStack,
@@ -173,6 +179,10 @@ export default function RepositoryDetailView({ initial }: { initial: RepositoryD
           />
           <EnvVarsTable envVars={detail.envVariables} />
         </div>
+      )}
+
+      {isInspected && tab === 'consistency' && (
+        <ConsistencyPanel report={detail.consistency} />
       )}
 
       {isInspected && tab === 'installation' && (

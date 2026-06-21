@@ -5,6 +5,7 @@ import { getDocumentBuffer } from '../../../../../../lib/server/spaces'
 import { readZipFiles } from '../../../../../../lib/repository/zip-reader'
 import { detectStack } from '../../../../../../lib/repository/stack-detector'
 import { detectEnvVars } from '../../../../../../lib/repository/env-detector'
+import { checkConsistency } from '../../../../../../lib/repository/consistency-checker'
 import { assessAzureReadiness } from '../../../../../../lib/repository/azure-assessor'
 import { HttpError } from '../../../../../../lib/server/http'
 
@@ -58,6 +59,9 @@ export async function POST(
       secretCount: envVars.filter((v) => v.classification === 'secret').length,
     }
 
+    // ── Repository consistency check (runs before the cloud blueprint) ───────
+    const consistency = checkConsistency(files, stack, envVars)
+
     await prisma.repositoryPackage.update({
       where: { id },
       data: {
@@ -70,6 +74,8 @@ export async function POST(
         appType: stack.appType,
         detectedServicesJson: JSON.stringify(detectedServices),
         envVariablesJson: JSON.stringify(envVars),
+        consistencyScore: consistency.score,
+        consistencyFindingsJson: JSON.stringify(consistency),
       },
     })
 
@@ -122,6 +128,7 @@ export async function POST(
       startCommand: stack.startCommand,
       appType: stack.appType,
       detectedServices,
+      consistency,
       recommendedPath: azure.recommendedPath,
       suitability: azure.suitability,
       envVariables: envVars,

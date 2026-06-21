@@ -5,6 +5,7 @@ import { ensureSuperTokensInit } from '../../../lib/auth/supertokens-backend'
 import { requireAccountUser, requireRepositoryOwnership } from '../../../lib/server/account-access'
 import { prisma } from '../../../lib/db'
 import RepositoryDetailView, { type RepositoryDetail } from '../../../components/repository/RepositoryDetailView'
+import type { ConsistencyReport } from '../../../lib/repository/consistency-checker'
 
 export const runtime = 'nodejs'
 
@@ -83,6 +84,9 @@ export default async function RepositoryDetailPage({ params }: { params: Promise
     startCommand: repository.startCommand,
     appType: repository.appType,
     envVariables: parseJson<EnvVariable[]>(repository.envVariablesJson, []),
+    consistency: repository.consistencyFindingsJson
+      ? parseJson<ConsistencyReport | null>(repository.consistencyFindingsJson, null)
+      : null,
     installationId: installation?.id ?? null,
     readinessScore: installation?.readinessScore ?? null,
     suitability: recs.suitability,

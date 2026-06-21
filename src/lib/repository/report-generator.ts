@@ -1,6 +1,65 @@
 import type { StackResult } from './stack-detector'
 import type { EnvVariable } from './env-detector'
 import type { AzureAssessment } from './azure-assessor'
+import type { ConsistencyReport, ConsistencySeverity } from './consistency-checker'
+
+/**
+ * Plain-language summary of the consistency check for the stakeholder report.
+ *
+ * NOTE: this is the only place where an AI model may be substituted — the
+ * detection itself is fully deterministic static analysis. To use AI, replace
+ * this function's body with a call that summarises `consistency.findings`; the
+ * rest of the pipeline is unchanged.
+ */
+export function summariseConsistencyForStakeholders(consistency: ConsistencyReport): string {
+  const { counts, score } = consistency
+  if (counts.critical === 0 && counts.warning === 0) {
+    return `The delivered repository looks internally consistent (cleanliness ${score}/100). No blocking issues were found by the automated checks.`
+  }
+  const parts: string[] = []
+  if (counts.critical > 0) parts.push(`${counts.critical} critical issue${counts.critical === 1 ? '' : 's'} that should be fixed before installation`)
+  if (counts.warning > 0) parts.push(`${counts.warning} warning${counts.warning === 1 ? '' : 's'} to review`)
+  if (counts.info > 0) parts.push(`${counts.info} minor note${counts.info === 1 ? '' : 's'}`)
+  const verdict = counts.critical > 0
+    ? 'The repository is not yet clean enough to install without changes.'
+    : 'The repository can likely be installed, but some clean-up is recommended.'
+  return `Automated consistency checks scored the repository ${score}/100 and found ${parts.join(', ')}. ${verdict}`
+}
+
+const SEVERITY_ORDER: ConsistencySeverity[] = ['critical', 'warning', 'info']
+
+function renderConsistencySection(consistency: ConsistencyReport): string[] {
+  const lines: string[] = []
+  lines.push('## Repository Consistency Check')
+  lines.push('')
+  lines.push(`**Cleanliness score:** ${consistency.score}/100 — ${consistency.counts.critical} critical · ${consistency.counts.warning} warning · ${consistency.counts.info} info`)
+  if (consistency.partial) {
+    lines.push('')
+    lines.push('> ⚠️ The repository was large; static analysis was partial. Absence-based findings (orphaned modules, unused code) may be incomplete.')
+  }
+  lines.push('')
+  if (consistency.findings.length === 0) {
+    lines.push('_No consistency issues detected._')
+    lines.push('')
+    lines.push('---')
+    lines.push('')
+    return lines
+  }
+  for (const sev of SEVERITY_ORDER) {
+    const group = consistency.findings.filter((f) => f.severity === sev)
+    if (group.length === 0) continue
+    lines.push(`### ${sev[0].toUpperCase()}${sev.slice(1)} (${group.length})`)
+    lines.push('')
+    for (const f of group) {
+      const loc = f.location ? ` _(${f.location})_` : ''
+      lines.push(`- **${f.title}** — ${f.detail}${loc}`)
+    }
+    lines.push('')
+  }
+  lines.push('---')
+  lines.push('')
+  return lines
+}
 
 function suitabilityLabel(s: AzureAssessment['suitability']): string {
   switch (s) {
@@ -36,7 +95,8 @@ export function generateStakeholderReport(
   provider: string,
   stack: StackResult,
   envVars: EnvVariable[],
-  assessment: AzureAssessment
+  assessment: AzureAssessment,
+  consistency?: ConsistencyReport
 ): string {
   const today = new Date().toISOString().split('T')[0]
   const fwLabel = stack.framework !== 'unknown' ? stack.framework : stack.language
@@ -72,6 +132,13 @@ export function generateStakeholderReport(
   lines.push('')
   if (secrets.length > 0) {
     lines.push(`It also uses **${secrets.length} secret value(s)** (such as API keys or passwords) that must be supplied securely before go-live.`)
+    lines.push('')
+  }
+
+  if (consistency) {
+    lines.push('## Is the delivered code consistent?')
+    lines.push('')
+    lines.push(summariseConsistencyForStakeholders(consistency))
     lines.push('')
   }
 
@@ -114,7 +181,8 @@ export function generateEngineerReport(
   repositoryName: string,
   stack: StackResult,
   envVars: EnvVariable[],
-  assessment: AzureAssessment
+  assessment: AzureAssessment,
+  consistency?: ConsistencyReport
 ): string {
   const today = new Date().toISOString().split('T')[0]
   const required   = envVars.filter((v) => v.classification === 'required')
@@ -158,6 +226,11 @@ export function generateEngineerReport(
   lines.push('')
   lines.push('---')
   lines.push('')
+
+  // ── Repository Consistency Check ─────────────────────────────────────────
+  if (consistency) {
+    lines.push(...renderConsistencySection(consistency))
+  }
 
   // ── 2. Repository / Application Summary ──────────────────────────────────
   lines.push('## 2. Repository / Application Summary')

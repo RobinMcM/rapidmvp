@@ -6,6 +6,7 @@ import { HttpError } from '../../../../../../../../lib/server/http'
 import type { StackResult } from '../../../../../../../../lib/repository/stack-detector'
 import type { EnvVariable } from '../../../../../../../../lib/repository/env-detector'
 import type { AzureAssessment } from '../../../../../../../../lib/repository/azure-assessor'
+import type { ConsistencyReport } from '../../../../../../../../lib/repository/consistency-checker'
 
 export const runtime = 'nodejs'
 
@@ -81,14 +82,19 @@ export async function POST(
       buildScripts: [],
     }
 
+    const consistency = repository.consistencyFindingsJson
+      ? (JSON.parse(repository.consistencyFindingsJson) as ConsistencyReport)
+      : undefined
+
     const stakeholderMarkdown = generateStakeholderReport(
       repository.name,
       installation.provider,
       stack,
       envVars,
-      assessment
+      assessment,
+      consistency
     )
-    const engineerMarkdown = generateEngineerReport(repository.name, stack, envVars, assessment)
+    const engineerMarkdown = generateEngineerReport(repository.name, stack, envVars, assessment, consistency)
 
     const report = await prisma.handoverReport.upsert({
       where: { cloudInstallationId: installId },
