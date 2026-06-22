@@ -1,15 +1,16 @@
 'use client'
 
+import { CheckCircle2, MousePointerClick } from 'lucide-react'
 import {
   CONFIDENCE_LABEL,
   confidenceExplanation,
   type ArchNode,
 } from '../../lib/repository/architecture-model'
-import { CONFIDENCE_STYLE, NODE_ICON } from './archStyles'
+import { CONFIDENCE_STYLE, KIND_STYLE, NODE_ICON } from './archStyles'
 
 /**
  * The inspector panel. Shows the full information model for the active node:
- * Title, Description, Purpose, Deployment Notes, Confidence (+ explanation).
+ * What this is, Purpose, Deployment notes, Evidence, Confidence.
  * Updated on hover or keyboard focus of any node.
  */
 export default function ArchitectureHoverCard({ node }: { node: ArchNode | null }) {
@@ -17,10 +18,13 @@ export default function ArchitectureHoverCard({ node }: { node: ArchNode | null 
     return (
       <div
         id="architecture-inspector"
-        className="rounded-xl bg-rm-dark-2/70 border border-slate-800 p-5 text-sm text-slate-500"
+        className="rounded-2xl bg-rm-dark-2/70 border border-slate-800 p-6 text-sm text-slate-400"
       >
-        <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 mb-2">Component details</p>
-        <p>Hover over or focus any component to see how it was detected, what it does, and its deployment notes.</p>
+        <span className="inline-flex items-center justify-center rounded-lg bg-slate-900/70 p-2 text-slate-400 mb-3">
+          <MousePointerClick size={18} aria-hidden="true" />
+        </span>
+        <p className="text-slate-300 font-semibold mb-1">Explore the architecture</p>
+        <p>Hover over or focus any component to see what it is, how it was detected, and its deployment notes.</p>
       </div>
     )
   }
@@ -33,44 +37,43 @@ export default function ArchitectureHoverCard({ node }: { node: ArchNode | null 
       id="architecture-inspector"
       role="region"
       aria-live="polite"
-      className={`rounded-xl bg-rm-dark-2/70 border ${c.ring} p-5 flex flex-col gap-4`}
+      className="rounded-2xl bg-rm-dark-2/80 border border-slate-700/70 p-6 flex flex-col gap-5"
     >
       <div className="flex items-start gap-3">
-        <span className="flex-shrink-0 rounded-lg bg-slate-900/70 p-2 text-slate-300">
-          <Icon size={20} aria-hidden="true" />
+        <span className={`flex-shrink-0 rounded-lg p-2.5 ${KIND_STYLE[node.kind]}`}>
+          <Icon size={22} aria-hidden="true" />
         </span>
         <div className="min-w-0">
-          <h4 className="text-white font-semibold text-base">{node.title}</h4>
-          <span className={`mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold ${c.badge}`}>
+          <h3 className="text-white font-bold text-base leading-tight">{node.title}</h3>
+          <span className={`mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide ${c.badge}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`} aria-hidden="true" />
             {CONFIDENCE_LABEL[node.confidence]}
           </span>
         </div>
       </div>
 
-      {node.description && (
-        <Field label="Description" value={node.description} />
-      )}
+      {node.description && <Field label="What this is" value={node.description} />}
       <Field label="Purpose" value={node.purpose} />
       <Field label="Deployment notes" value={node.deploymentRecommendation ?? 'Not yet determined.'} />
 
-      <div>
-        <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 mb-1">Confidence</p>
-        <p className={`text-sm ${c.text}`}>{confidenceExplanation(node)}</p>
-      </div>
-
       {node.detectedFrom.length > 0 && (
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 mb-1">Detected from</p>
-          <ul className="flex flex-wrap gap-1.5">
+          <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 mb-2">Evidence</p>
+          <ul className="flex flex-col gap-2">
             {node.detectedFrom.map((d, i) => (
-              <li key={i} className="px-2 py-0.5 rounded bg-slate-900/70 text-slate-400 text-[11px] font-mono">
-                {d}
+              <li key={i} className="flex items-start gap-2 text-slate-300 text-sm">
+                <CheckCircle2 size={15} className="text-azure-400 mt-0.5 flex-shrink-0" aria-hidden="true" />
+                <span>{d}</span>
               </li>
             ))}
           </ul>
         </div>
       )}
+
+      <div>
+        <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 mb-1">Confidence</p>
+        <p className={`text-sm ${c.text}`}>{confidenceExplanation(node)}</p>
+      </div>
     </div>
   )
 }

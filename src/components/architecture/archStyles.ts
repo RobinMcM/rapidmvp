@@ -24,6 +24,20 @@ export const NODE_ICON: Record<ArchNodeKind, LucideIcon> = {
   deployment_target: Cloud,
 }
 
+// Per-kind tint for the icon tile, so each component type reads at a glance
+// (matches the infographic's coloured tiles).
+export const KIND_STYLE: Record<ArchNodeKind, string> = {
+  user: 'bg-slate-500/15 text-slate-300',
+  application: 'bg-azure/15 text-azure-300',
+  database: 'bg-emerald-500/15 text-emerald-300',
+  authentication: 'bg-violet-500/15 text-violet-300',
+  storage: 'bg-amber-500/15 text-amber-300',
+  email: 'bg-teal-500/15 text-teal-300',
+  queue: 'bg-cf-orange/15 text-cf-300',
+  external_service: 'bg-slate-500/15 text-slate-300',
+  deployment_target: 'bg-azure/15 text-azure-300',
+}
+
 export type ConfidenceStyle = {
   badge: string
   dot: string
