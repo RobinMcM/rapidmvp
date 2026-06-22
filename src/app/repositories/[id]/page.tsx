@@ -8,6 +8,8 @@ import RepositoryDetailView, { type RepositoryDetail } from '../../../components
 import type { ConsistencyReport } from '../../../lib/repository/consistency-checker'
 import type { DetectedService } from '../../../lib/repository/service-detector'
 import { buildArchitectureModel } from '../../../lib/repository/architecture-model'
+import type { MigrationPlan, Assumption, Clarification } from '../../../lib/repository/migration-mapper'
+import type { OperationalConfidence } from '../../../lib/repository/operational-confidence'
 
 export const runtime = 'nodejs'
 
@@ -82,6 +84,11 @@ export default async function RepositoryDetailPage({ params }: { params: Promise
   const azureServices = parseJson<AzureService[]>(installation?.cloudResourcesJson ?? null, [])
   const envVariables = parseJson<EnvVariable[]>(repository.envVariablesJson, [])
 
+  const migrationPlan = parseJson<MigrationPlan | null>(installation?.migrationMappingJson ?? null, null)
+  const operational = parseJson<OperationalConfidence | null>(installation?.operationalConfidenceJson ?? null, null)
+  const assumptions = parseJson<Assumption[]>(installation?.assumptionsJson ?? null, [])
+  const clarifications = parseJson<Clarification[]>(installation?.clarificationsJson ?? null, [])
+
   const architecture =
     repository.status === 'inspected'
       ? buildArchitectureModel({
@@ -120,6 +127,10 @@ export default async function RepositoryDetailPage({ params }: { params: Promise
     risks: risks.risks,
     installSteps: parseJson<string[]>(installation?.installStepsJson ?? null, []),
     secretsMapping: parseJson<SecretMapping[]>(installation?.secretsMappingJson ?? null, []),
+    migrationPlan,
+    operational,
+    assumptions,
+    clarifications,
     stakeholderMarkdown: installation?.handoverReport?.stakeholderMarkdown ?? null,
     engineerMarkdown: installation?.handoverReport?.engineerMarkdown ?? null,
   }

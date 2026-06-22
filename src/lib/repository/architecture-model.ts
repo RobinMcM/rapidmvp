@@ -1,4 +1,5 @@
 import type { DetectedService, ServiceCategory } from './service-detector'
+import { mapService } from './migration-mapper'
 
 /**
  * Deterministic Architecture Overview model.
@@ -142,6 +143,14 @@ function categoryToKind(c: ServiceCategory): ArchNodeKind {
   return c // ServiceCategory is a subset of ArchNodeKind
 }
 
+/** Per-node Azure recommendation derived from the migration mapping registry. */
+function migrationNoteFor(s: DetectedService): string | null {
+  const m = mapService(s)
+  if (m.decision === 'remain') return `Recommended: remain on ${s.provider}.`
+  if (m.decision === 'migrate') return `Recommended Azure target: ${m.azureState}.`
+  return null
+}
+
 /** Match an Azure service to the component it supports, for deployment notes. */
 function azureNoteFor(kind: ArchNodeKind, azure: AzureServiceLike[]): string | null {
   const find = (re: RegExp) => azure.find((s) => re.test(s.name))
@@ -222,7 +231,9 @@ export function buildArchitectureModel(facts: ArchitectureFacts): ArchitectureMo
         purpose: PURPOSE[kind],
         detectedFrom: s.detectedFrom,
         confidence: s.confidence,
-        deploymentRecommendation: azureNoteFor(kind, facts.azureServices),
+        // Azure recommendation comes from the single migration-mapping source,
+        // falling back to the deployment-target tier note for core layers.
+        deploymentRecommendation: azureNoteFor(kind, facts.azureServices) ?? migrationNoteFor(s),
       })
       edge('application', id, EDGE_LABEL[kind] ?? 'uses', s.confidence)
     }

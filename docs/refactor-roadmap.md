@@ -1,3 +1,9 @@
+> ⚠️ **SUPERSEDED (2026-06-22).** This roadmap predates the current schema and references models that
+> no longer exist (`ClientBlueprint`, `RepositoryAssessment`, `workspace/blueprints`). That refactor
+> has already shipped — the live schema is `RepositoryPackage → CloudInstallation → HandoverReport`.
+> For current direction see **`azure-migration-planning-strategy.md`** (Azure-only strategy) and
+> **`stage-1-implementation-plan.md`** (the active 4-capability build plan). Kept for historical reference only.
+
 # RapidMVP Refactoring Roadmap
 ### Repository → Cloud Blueprint Platform
 

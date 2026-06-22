@@ -154,6 +154,12 @@ model CloudInstallation {
   risksJson           String?
   recommendationsJson String?
 
+  // Azure Migration Planning (deterministic, rule-based)
+  migrationMappingJson      String? // detected → Azure mapping plan (MigrationPlan)
+  assumptionsJson           String? // assumptions made while mapping
+  clarificationsJson        String? // open questions before a clean cutover
+  operationalConfidenceJson String? // 6-category operational readiness snapshot
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

@@ -5,11 +5,15 @@ import StackSummaryCard from './StackSummaryCard'
 import EnvVarsTable from './EnvVarsTable'
 import AzureServicesPanel from './AzureServicesPanel'
 import HandoverReportPanel from './HandoverReportPanel'
-import ConsistencyPanel from './ConsistencyPanel'
+import MigrationPlanPanel from './MigrationPlanPanel'
+import OwnershipModelPanel from './OwnershipModelPanel'
+import OperationalConfidencePanel from './OperationalConfidencePanel'
 import ArchitectureOverviewTab from '../architecture/ArchitectureOverviewTab'
 import ArchitectureGraphTab from '../architecture/ArchitectureGraphTab'
 import type { ConsistencyReport } from '../../lib/repository/consistency-checker'
 import type { ArchitectureModel } from '../../lib/repository/architecture-model'
+import type { MigrationPlan, Assumption, Clarification } from '../../lib/repository/migration-mapper'
+import type { OperationalConfidence } from '../../lib/repository/operational-confidence'
 
 type EnvVariable = {
   name: string
@@ -50,20 +54,26 @@ export type RepositoryDetail = {
   risks: string[]
   installSteps: string[]
   secretsMapping: SecretMapping[]
+  // Azure migration planning
+  migrationPlan: MigrationPlan | null
+  operational: OperationalConfidence | null
+  assumptions: Assumption[]
+  clarifications: Clarification[]
   // handover report
   stakeholderMarkdown: string | null
   engineerMarkdown: string | null
 }
 
-type Tab = 'delivered' | 'consistency' | 'architecture' | 'installation' | 'handover' | 'architecture-graph'
+type Tab = 'delivered' | 'migration' | 'installation' | 'confidence' | 'architecture' | 'architecture-graph' | 'handover'
 
 const TABS: { key: Tab; label: string }[] = [
   { key: 'delivered', label: 'Delivered' },
-  { key: 'consistency', label: 'Consistency' },
+  { key: 'migration', label: 'Migration Plan' },
+  { key: 'installation', label: 'Azure Blueprint' },
+  { key: 'confidence', label: 'Operational Confidence' },
   { key: 'architecture', label: 'Architecture Overview' },
-  { key: 'installation', label: 'Cloud Installation' },
-  { key: 'handover', label: 'Handover Report' },
   { key: 'architecture-graph', label: 'Architecture' },
+  { key: 'handover', label: 'Handover Report' },
 ]
 
 export default function RepositoryDetailView({ initial }: { initial: RepositoryDetail }) {
@@ -102,6 +112,10 @@ export default function RepositoryDetailView({ initial }: { initial: RepositoryD
         installSteps: string[]
         consistency: ConsistencyReport
         architecture: ArchitectureModel | null
+        migrationPlan: MigrationPlan | null
+        operational: OperationalConfidence | null
+        assumptions: Assumption[]
+        clarifications: Clarification[]
       }
       setDetail((d) => ({
         ...d,
@@ -124,6 +138,10 @@ export default function RepositoryDetailView({ initial }: { initial: RepositoryD
         blockers: data.blockers,
         risks: data.risks,
         installSteps: data.installSteps,
+        migrationPlan: data.migrationPlan,
+        operational: data.operational,
+        assumptions: data.assumptions,
+        clarifications: data.clarifications,
         // a fresh inspection invalidates any previous report
         stakeholderMarkdown: null,
         engineerMarkdown: null,
@@ -139,7 +157,7 @@ export default function RepositoryDetailView({ initial }: { initial: RepositoryD
     <div className="flex flex-col gap-6">
       {/* Inspect bar */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex gap-1 rounded-lg bg-slate-900/60 p-1">
+        <div className="flex gap-1 rounded-lg bg-slate-900/60 p-1 flex-wrap">
           {TABS.map((t) => (
             <button
               key={t.key}
@@ -168,7 +186,7 @@ export default function RepositoryDetailView({ initial }: { initial: RepositoryD
         <div className="rounded-xl bg-rm-dark-2/70 border border-slate-800 p-10 text-center">
           <p className="text-slate-400 text-sm">
             This repository has not been inspected yet. Click <span className="text-azure-300">Inspect repository</span> to
-            detect its stack, environment variables, and cloud installation requirements.
+            detect its stack, map it onto Azure, and assess deployment readiness.
           </p>
         </div>
       )}
@@ -189,8 +207,12 @@ export default function RepositoryDetailView({ initial }: { initial: RepositoryD
         </div>
       )}
 
-      {isInspected && tab === 'consistency' && (
-        <ConsistencyPanel report={detail.consistency} />
+      {isInspected && tab === 'migration' && (
+        <MigrationPlanPanel plan={detail.migrationPlan} />
+      )}
+
+      {isInspected && tab === 'confidence' && (
+        <OperationalConfidencePanel confidence={detail.operational} />
       )}
 
       {isInspected && tab === 'architecture' && (
@@ -205,7 +227,7 @@ export default function RepositoryDetailView({ initial }: { initial: RepositoryD
               <p className="text-white font-semibold">Microsoft Azure</p>
             </div>
             <span className="px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 text-slate-400">
-              AWS &amp; Google Cloud — coming soon
+              Azure-native deployment blueprint
             </span>
           </div>
 
@@ -231,10 +253,36 @@ export default function RepositoryDetailView({ initial }: { initial: RepositoryD
             risks={detail.risks}
           />
 
+          {/* Ownership model — a core product concept */}
+          <OwnershipModelPanel plan={detail.migrationPlan} services={detail.services} />
+
+          {/* Deployment sequence + dependencies */}
+          {detail.installSteps.length > 0 && (
+            <div className="rounded-xl bg-rm-dark-2/70 border border-slate-800 overflow-hidden">
+              <div className="px-5 py-3 border-b border-slate-800">
+                <span className="text-slate-300 font-semibold text-sm">Deployment Sequence</span>
+              </div>
+              <ol className="divide-y divide-slate-800/50">
+                {detail.installSteps.map((step, i) => (
+                  <li key={i} className="px-5 py-3 flex items-start gap-3">
+                    <span className="font-mono text-[11px] text-azure-300 mt-0.5 flex-shrink-0">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="text-slate-300 text-sm">{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
+          {/* Environment variable matrix */}
+          {detail.envVariables.length > 0 && (
+            <EnvVarsTable envVars={detail.envVariables} />
+          )}
+
+          {/* Required secrets → Key Vault */}
           {detail.secretsMapping.length > 0 && (
             <div className="rounded-xl bg-rm-dark-2/70 border border-slate-800 overflow-hidden">
               <div className="px-5 py-3 border-b border-slate-800">
-                <span className="text-slate-300 font-semibold text-sm">Secrets &amp; Configuration Mapping</span>
+                <span className="text-slate-300 font-semibold text-sm">Required Secrets → Azure Key Vault</span>
               </div>
               <div className="divide-y divide-slate-800/50">
                 {detail.secretsMapping.map((s) => (
@@ -244,6 +292,38 @@ export default function RepositoryDetailView({ initial }: { initial: RepositoryD
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Assumptions + clarifications */}
+          {(detail.assumptions.length > 0 || detail.clarifications.length > 0) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {detail.assumptions.length > 0 && (
+                <div className="rounded-xl bg-rm-dark-2/70 border border-slate-800 p-5">
+                  <p className="text-slate-300 font-semibold text-sm mb-3">Assumptions</p>
+                  <ul className="flex flex-col gap-2">
+                    {detail.assumptions.map((a, i) => (
+                      <li key={i} className="text-slate-400 text-xs">
+                        <span className="text-slate-300">{a.text}</span>
+                        <span className="block text-slate-600 mt-0.5">{a.basis}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {detail.clarifications.length > 0 && (
+                <div className="rounded-xl bg-rm-dark-2/70 border border-slate-800 p-5">
+                  <p className="text-slate-300 font-semibold text-sm mb-3">Requires Clarification</p>
+                  <ul className="flex flex-col gap-2">
+                    {detail.clarifications.map((c, i) => (
+                      <li key={i} className="text-slate-400 text-xs">
+                        <span className="text-slate-300">{c.question}</span>
+                        <span className="block text-slate-600 mt-0.5">{c.why}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           )}
         </div>

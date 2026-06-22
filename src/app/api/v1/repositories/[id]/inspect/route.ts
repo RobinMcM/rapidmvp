@@ -9,6 +9,12 @@ import { detectServices } from '../../../../../../lib/repository/service-detecto
 import { checkConsistency } from '../../../../../../lib/repository/consistency-checker'
 import { assessAzureReadiness } from '../../../../../../lib/repository/azure-assessor'
 import { buildArchitectureModel } from '../../../../../../lib/repository/architecture-model'
+import {
+  buildMigrationPlan,
+  buildAssumptions,
+  buildClarifications,
+} from '../../../../../../lib/repository/migration-mapper'
+import { assessOperationalConfidence } from '../../../../../../lib/repository/operational-confidence'
 import { HttpError } from '../../../../../../lib/server/http'
 
 export const runtime = 'nodejs'
@@ -89,6 +95,12 @@ export async function POST(
     // ── Derive the default Azure cloud installation ─────────────────────────
     const azure = assessAzureReadiness(stack, envVars, files)
 
+    // ── Azure Migration Planning (deterministic, single source of Azure recs) ─
+    const migrationPlan = buildMigrationPlan(services, stack)
+    const assumptions = buildAssumptions(migrationPlan)
+    const clarifications = buildClarifications(migrationPlan)
+    const operational = assessOperationalConfidence({ consistency, azure, stack, migrationPlan })
+
     const secretsMapping = envVars
       .filter((v) => v.classification === 'secret')
       .map((v) => ({
@@ -113,6 +125,10 @@ export async function POST(
         findings: azure.governanceFindings,
         assets: azure.buildScripts,
       }),
+      migrationMappingJson: JSON.stringify(migrationPlan),
+      assumptionsJson: JSON.stringify(assumptions),
+      clarificationsJson: JSON.stringify(clarifications),
+      operationalConfidenceJson: JSON.stringify(operational),
       status: 'ready',
     }
 
@@ -157,6 +173,10 @@ export async function POST(
       risks: azure.risks,
       installSteps: azure.installSteps,
       architecture,
+      migrationPlan,
+      assumptions,
+      clarifications,
+      operational,
     })
   } catch (err) {
     if (err instanceof HttpError) {
