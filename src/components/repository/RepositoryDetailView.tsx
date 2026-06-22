@@ -6,7 +6,9 @@ import EnvVarsTable from './EnvVarsTable'
 import AzureServicesPanel from './AzureServicesPanel'
 import HandoverReportPanel from './HandoverReportPanel'
 import ConsistencyPanel from './ConsistencyPanel'
+import ArchitectureOverviewTab from '../architecture/ArchitectureOverviewTab'
 import type { ConsistencyReport } from '../../lib/repository/consistency-checker'
+import type { ArchitectureModel } from '../../lib/repository/architecture-model'
 
 type EnvVariable = {
   name: string
@@ -34,6 +36,7 @@ export type RepositoryDetail = {
   buildCommand: string | null
   startCommand: string | null
   appType: string | null
+  architecture: ArchitectureModel | null
   envVariables: EnvVariable[]
   consistency: ConsistencyReport | null
   // installation (Azure)
@@ -51,11 +54,12 @@ export type RepositoryDetail = {
   engineerMarkdown: string | null
 }
 
-type Tab = 'delivered' | 'consistency' | 'installation' | 'handover'
+type Tab = 'delivered' | 'consistency' | 'architecture' | 'installation' | 'handover'
 
 const TABS: { key: Tab; label: string }[] = [
   { key: 'delivered', label: 'Delivered' },
   { key: 'consistency', label: 'Consistency' },
+  { key: 'architecture', label: 'Architecture Overview' },
   { key: 'installation', label: 'Cloud Installation' },
   { key: 'handover', label: 'Handover Report' },
 ]
@@ -95,11 +99,13 @@ export default function RepositoryDetailView({ initial }: { initial: RepositoryD
         risks: string[]
         installSteps: string[]
         consistency: ConsistencyReport
+        architecture: ArchitectureModel | null
       }
       setDetail((d) => ({
         ...d,
         status: 'inspected',
         consistency: data.consistency,
+        architecture: data.architecture,
         installationId: data.installationId,
         readinessScore: data.readinessScore,
         detectedStack: data.detectedStack,
@@ -183,6 +189,10 @@ export default function RepositoryDetailView({ initial }: { initial: RepositoryD
 
       {isInspected && tab === 'consistency' && (
         <ConsistencyPanel report={detail.consistency} />
+      )}
+
+      {isInspected && tab === 'architecture' && (
+        <ArchitectureOverviewTab model={detail.architecture} />
       )}
 
       {isInspected && tab === 'installation' && (

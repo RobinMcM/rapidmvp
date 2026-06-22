@@ -5,8 +5,10 @@ import { getDocumentBuffer } from '../../../../../../lib/server/spaces'
 import { readZipFiles } from '../../../../../../lib/repository/zip-reader'
 import { detectStack } from '../../../../../../lib/repository/stack-detector'
 import { detectEnvVars } from '../../../../../../lib/repository/env-detector'
+import { detectServices } from '../../../../../../lib/repository/service-detector'
 import { checkConsistency } from '../../../../../../lib/repository/consistency-checker'
 import { assessAzureReadiness } from '../../../../../../lib/repository/azure-assessor'
+import { buildArchitectureModel } from '../../../../../../lib/repository/architecture-model'
 import { HttpError } from '../../../../../../lib/server/http'
 
 export const runtime = 'nodejs'
@@ -51,12 +53,17 @@ export async function POST(
     const stack = detectStack(files)
     const envVars = detectEnvVars(files)
 
+    // Deterministic service detection (DB/auth/storage/email/queue/external) used
+    // by the Architecture Overview. Persisted alongside the legacy boolean flags.
+    const services = detectServices(files, envVars).services
+
     const detectedServices = {
       hasDatabase: stack.hasDatabase,
       hasPrisma: stack.hasPrisma,
       hasDockerfile: stack.hasDockerfile,
       hasDockerCompose: stack.hasDockerCompose,
       secretCount: envVars.filter((v) => v.classification === 'secret').length,
+      services,
     }
 
     // ── Repository consistency check (runs before the cloud blueprint) ───────
@@ -115,6 +122,18 @@ export async function POST(
           data: { repositoryPackageId: id, provider: 'azure', ...installationData },
         })
 
+    // ── Architecture Overview model (deterministic, derived on the fly) ──────
+    const architecture = buildArchitectureModel({
+      appType: stack.appType,
+      detectedStack: stack.framework !== 'unknown' ? stack.framework : stack.language,
+      runtime: stack.language,
+      hasDatabase: stack.hasDatabase,
+      hasPrisma: stack.hasPrisma,
+      detectedServices: services,
+      envVarCount: envVars.length,
+      azureServices: azure.services,
+    })
+
     return NextResponse.json({
       id,
       status: 'inspected',
@@ -137,6 +156,7 @@ export async function POST(
       blockers: azure.blockers,
       risks: azure.risks,
       installSteps: azure.installSteps,
+      architecture,
     })
   } catch (err) {
     if (err instanceof HttpError) {

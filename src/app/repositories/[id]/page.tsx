@@ -6,6 +6,8 @@ import { requireAccountUser, requireRepositoryOwnership } from '../../../lib/ser
 import { prisma } from '../../../lib/db'
 import RepositoryDetailView, { type RepositoryDetail } from '../../../components/repository/RepositoryDetailView'
 import type { ConsistencyReport } from '../../../lib/repository/consistency-checker'
+import type { DetectedService } from '../../../lib/repository/service-detector'
+import { buildArchitectureModel } from '../../../lib/repository/architecture-model'
 
 export const runtime = 'nodejs'
 
@@ -73,6 +75,27 @@ export default async function RepositoryDetailPage({ params }: { params: Promise
     { blockers: [], risks: [] }
   )
 
+  const detectedServices = parseJson<{ hasDatabase?: boolean; hasPrisma?: boolean; services?: DetectedService[] }>(
+    repository.detectedServicesJson,
+    {}
+  )
+  const azureServices = parseJson<AzureService[]>(installation?.cloudResourcesJson ?? null, [])
+  const envVariables = parseJson<EnvVariable[]>(repository.envVariablesJson, [])
+
+  const architecture =
+    repository.status === 'inspected'
+      ? buildArchitectureModel({
+          appType: repository.appType,
+          detectedStack: repository.detectedStack,
+          runtime: repository.runtime,
+          hasDatabase: detectedServices.hasDatabase ?? false,
+          hasPrisma: detectedServices.hasPrisma ?? false,
+          detectedServices: detectedServices.services ?? [],
+          envVarCount: envVariables.length,
+          azureServices,
+        })
+      : null
+
   const initial: RepositoryDetail = {
     repositoryId: repository.id,
     name: repository.name,
@@ -83,7 +106,8 @@ export default async function RepositoryDetailPage({ params }: { params: Promise
     buildCommand: repository.buildCommand,
     startCommand: repository.startCommand,
     appType: repository.appType,
-    envVariables: parseJson<EnvVariable[]>(repository.envVariablesJson, []),
+    architecture,
+    envVariables,
     consistency: repository.consistencyFindingsJson
       ? parseJson<ConsistencyReport | null>(repository.consistencyFindingsJson, null)
       : null,
@@ -91,7 +115,7 @@ export default async function RepositoryDetailPage({ params }: { params: Promise
     readinessScore: installation?.readinessScore ?? null,
     suitability: recs.suitability,
     recommendedPath: recs.recommendedPath,
-    services: parseJson<AzureService[]>(installation?.cloudResourcesJson ?? null, []),
+    services: azureServices,
     blockers: risks.blockers,
     risks: risks.risks,
     installSteps: parseJson<string[]>(installation?.installStepsJson ?? null, []),

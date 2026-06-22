@@ -1,5 +1,6 @@
 import type { StackResult } from './stack-detector'
 import type { EnvVariable } from './env-detector'
+import { STORAGE_ENV_PATTERNS } from './service-detector'
 
 export type AzureService = {
   name: string
@@ -46,7 +47,7 @@ function hasDbDependency(stack: StackResult, envVars: EnvVariable[]): boolean {
 }
 
 function hasStorageDependency(envVars: EnvVariable[]): boolean {
-  return hasEnvVar(envVars, /BLOB/i, /STORAGE/i, /S3_BUCKET/i, /AWS_S3/i, /DO_SPACES/i, /CDN_URL/i, /AZURE_STORAGE/i)
+  return hasEnvVar(envVars, ...STORAGE_ENV_PATTERNS)
 }
 
 function detectHealthCheck(files: Map<string, string>): boolean {
