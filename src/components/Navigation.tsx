@@ -6,8 +6,9 @@ import Session from 'supertokens-auth-react/recipe/session'
 import { ensureFrontendSuperTokensInit } from '../lib/auth/supertokens-frontend'
 
 const navItems = [
-  { to: '/',        label: 'Home' },
-  { to: '/contact', label: 'Contact' },
+  { to: '/',             label: 'Home' },
+  { to: '/architecture', label: 'Architecture' },
+  { to: '/contact',      label: 'Contact' },
 ]
 
 export default function Navigation() {

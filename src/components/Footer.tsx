@@ -5,6 +5,7 @@ const CONTACT_EMAIL = 'mailto:hello@rapidmvp.io'
 const platformLinks = [
   { href: '/repositories/new', label: 'Upload a repository' },
   { href: '/repositories', label: 'Repositories' },
+  { href: '/architecture', label: 'Architecture' },
 ]
 
 const companyLinks = [
