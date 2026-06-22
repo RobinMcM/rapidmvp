@@ -7,6 +7,7 @@ import AzureServicesPanel from './AzureServicesPanel'
 import HandoverReportPanel from './HandoverReportPanel'
 import ConsistencyPanel from './ConsistencyPanel'
 import ArchitectureOverviewTab from '../architecture/ArchitectureOverviewTab'
+import ArchitectureGraphTab from '../architecture/ArchitectureGraphTab'
 import type { ConsistencyReport } from '../../lib/repository/consistency-checker'
 import type { ArchitectureModel } from '../../lib/repository/architecture-model'
 
@@ -54,7 +55,7 @@ export type RepositoryDetail = {
   engineerMarkdown: string | null
 }
 
-type Tab = 'delivered' | 'consistency' | 'architecture' | 'installation' | 'handover'
+type Tab = 'delivered' | 'consistency' | 'architecture' | 'installation' | 'handover' | 'architecture-graph'
 
 const TABS: { key: Tab; label: string }[] = [
   { key: 'delivered', label: 'Delivered' },
@@ -62,6 +63,7 @@ const TABS: { key: Tab; label: string }[] = [
   { key: 'architecture', label: 'Architecture Overview' },
   { key: 'installation', label: 'Cloud Installation' },
   { key: 'handover', label: 'Handover Report' },
+  { key: 'architecture-graph', label: 'Architecture' },
 ]
 
 export default function RepositoryDetailView({ initial }: { initial: RepositoryDetail }) {
@@ -254,6 +256,10 @@ export default function RepositoryDetailView({ initial }: { initial: RepositoryD
           initialStakeholderMarkdown={detail.stakeholderMarkdown}
           initialEngineerMarkdown={detail.engineerMarkdown}
         />
+      )}
+
+      {isInspected && tab === 'architecture-graph' && (
+        <ArchitectureGraphTab model={detail.architecture} />
       )}
     </div>
   )
