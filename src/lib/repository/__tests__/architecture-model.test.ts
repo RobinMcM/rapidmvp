@@ -97,7 +97,7 @@ describe('buildArchitectureModel', () => {
 describe('confidence presentation helpers', () => {
   const make = (confidence: ArchNode['confidence'], detectedFrom: string[]): ArchNode => ({
     id: 'x', kind: 'database', title: 'X', description: '', purpose: '',
-    detectedFrom, confidence, deploymentRecommendation: null,
+    detectedFrom, confidence, deploymentRecommendation: null, azureResource: null,
   })
 
   it('labels each confidence level in stakeholder-friendly terms', () => {

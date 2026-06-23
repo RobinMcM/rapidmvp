@@ -7,9 +7,14 @@ import {
   type ArchitectureModel,
   type ArchNode,
 } from '../../lib/repository/architecture-model'
+import {
+  resolveAzureServiceOverview,
+  type AzureServiceOverview as Overview,
+} from '../../lib/repository/azure-service-catalog'
 import { CONFIDENCE_STYLE } from './archStyles'
 import ArchitectureNode from './ArchitectureNode'
 import ArchitectureHoverCard from './ArchitectureHoverCard'
+import AzureServiceOverview from './AzureServiceOverview'
 import LayerBlock from '../platform-architecture/LayerBlock'
 import { DownConnector } from '../platform-architecture/connectors'
 
@@ -23,6 +28,8 @@ const LEGEND_HINT: Record<ArchConfidence, string> = {
 
 export default function ArchitectureOverviewTab({ model }: { model: ArchitectureModel | null }) {
   const [active, setActive] = useState<ArchNode | null>(null)
+  const [overview, setOverview] = useState<Overview | null>(null)
+  const openService = (resource: string) => setOverview(resolveAzureServiceOverview(resource))
 
   // Escape clears the inspector selection (keyboard dismissal).
   useEffect(() => {
@@ -145,11 +152,17 @@ export default function ArchitectureOverviewTab({ model }: { model: Architecture
 
           {/* Right rail: synopsis + legend (sticky on desktop) */}
           <div className="lg:sticky lg:top-6 flex flex-col gap-4">
-            <ArchitectureHoverCard node={active} />
+            <ArchitectureHoverCard node={active} onViewService={openService} />
             <Legend />
           </div>
         </div>
       </div>
+
+      <AzureServiceOverview
+        overview={overview}
+        onClose={() => setOverview(null)}
+        onSelectResource={openService}
+      />
     </div>
   )
 }

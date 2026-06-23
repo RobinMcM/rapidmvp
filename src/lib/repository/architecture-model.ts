@@ -35,6 +35,12 @@ export type ArchNode = {
   detectedFrom: string[]
   confidence: ArchConfidence
   deploymentRecommendation: string | null
+  /**
+   * Canonical Azure resource backing this component, when one is recommended.
+   * Links the node to the shared Azure Service Component Model (azure-service-catalog),
+   * so the Architecture Overview and Migration Planning open the same overview.
+   */
+  azureResource: string | null
 }
 
 export type ArchEdge = {
@@ -152,14 +158,25 @@ function migrationNoteFor(s: DetectedService): string | null {
 }
 
 /** Match an Azure service to the component it supports, for deployment notes. */
-function azureNoteFor(kind: ArchNodeKind, azure: AzureServiceLike[]): string | null {
+function azureServiceFor(kind: ArchNodeKind, azure: AzureServiceLike[]): AzureServiceLike | null {
   const find = (re: RegExp) => azure.find((s) => re.test(s.name))
   let svc: AzureServiceLike | undefined
   if (kind === 'application') svc = find(/App Service/i)
   else if (kind === 'database') svc = find(/PostgreSQL|Database/i)
   else if (kind === 'storage') svc = find(/Storage Account/i)
-  if (!svc) return null
-  return `Recommended ${svc.name} (${svc.tier}).`
+  return svc ?? null
+}
+
+function azureNoteFor(kind: ArchNodeKind, azure: AzureServiceLike[]): string | null {
+  const svc = azureServiceFor(kind, azure)
+  return svc ? `Recommended ${svc.name} (${svc.tier}).` : null
+}
+
+/** Canonical Azure resource backing a detected service, from the shared sources. */
+function azureResourceFor(s: DetectedService, azure: AzureServiceLike[]): string | null {
+  // Prefer the migration mapping's canonical target; fall back to the blueprint
+  // service that supports this layer (e.g. the App Service / PostgreSQL entry).
+  return mapService(s).azureResource ?? azureServiceFor(categoryToKind(s.category), azure)?.name ?? null
 }
 
 // ── Builder ──────────────────────────────────────────────────────────────────────
@@ -182,6 +199,7 @@ export function buildArchitectureModel(facts: ArchitectureFacts): ArchitectureMo
     detectedFrom: ['Standard application entry point'],
     confidence: 'detected',
     deploymentRecommendation: null,
+    azureResource: null,
   })
 
   // 2. Application (centre).
@@ -198,6 +216,7 @@ export function buildArchitectureModel(facts: ArchitectureFacts): ArchitectureMo
     detectedFrom: appKnown ? [`Detected stack: ${facts.detectedStack}`] : ['No framework or language detected'],
     confidence: appConfidence,
     deploymentRecommendation: azureNoteFor('application', facts.azureServices),
+    azureResource: appKnown ? azureServiceFor('application', facts.azureServices)?.name ?? 'Azure App Service' : null,
   })
   edge('user', 'application', 'uses', appConfidence === 'detected' ? 'detected' : 'requires_clarification')
 
@@ -234,6 +253,7 @@ export function buildArchitectureModel(facts: ArchitectureFacts): ArchitectureMo
         // Azure recommendation comes from the single migration-mapping source,
         // falling back to the deployment-target tier note for core layers.
         deploymentRecommendation: azureNoteFor(kind, facts.azureServices) ?? migrationNoteFor(s),
+        azureResource: azureResourceFor(s, facts.azureServices),
       })
       edge('application', id, EDGE_LABEL[kind] ?? 'uses', s.confidence)
     }
@@ -257,6 +277,7 @@ export function buildArchitectureModel(facts: ArchitectureFacts): ArchitectureMo
         detectedFrom: [facts.hasPrisma ? 'Prisma ORM detected' : 'Database dependency detected'],
         confidence: 'likely',
         deploymentRecommendation: azureNoteFor('database', facts.azureServices),
+        azureResource: azureServiceFor('database', facts.azureServices)?.name ?? null,
       })
       edge('application', id, 'reads/writes', 'likely')
       continue
@@ -272,6 +293,7 @@ export function buildArchitectureModel(facts: ArchitectureFacts): ArchitectureMo
       detectedFrom: [],
       confidence: 'requires_clarification',
       deploymentRecommendation: null,
+      azureResource: null,
     })
     edge('application', id, EDGE_LABEL[kind] ?? 'uses', 'requires_clarification')
   }
@@ -288,6 +310,7 @@ export function buildArchitectureModel(facts: ArchitectureFacts): ArchitectureMo
       detectedFrom: ['Azure cloud blueprint'],
       confidence: 'detected',
       deploymentRecommendation: `${svc.tier}.`,
+      azureResource: svc.name,
     })
     edge('application', id, 'deploys to', 'detected')
   })

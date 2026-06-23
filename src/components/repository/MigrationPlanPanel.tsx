@@ -1,9 +1,19 @@
+'use client'
+
+import { useState } from 'react'
+import { ArrowRight } from 'lucide-react'
 import type {
   MigrationPlan,
   MigrationMapping,
   MigrationComplexity,
 } from '../../lib/repository/migration-mapper'
 import { COMPLEXITY_LABEL, CATEGORY_LABEL } from '../../lib/repository/migration-mapper'
+import {
+  hasAzureServiceProfile,
+  resolveAzureServiceOverview,
+  type AzureServiceOverview as Overview,
+} from '../../lib/repository/azure-service-catalog'
+import AzureServiceOverview from '../architecture/AzureServiceOverview'
 
 const COMPLEXITY_STYLE: Record<MigrationComplexity, string> = {
   none: 'bg-slate-800 text-slate-400',
@@ -44,9 +54,21 @@ const GROUPS: { key: keyof MigrationPlan['groups']; style: GroupStyle }[] = [
   },
 ]
 
-function MappingRow({ m }: { m: MigrationMapping }) {
-  return (
-    <div className="px-5 py-4">
+/** Build the contextual Azure Service Overview for a single mapping. */
+function overviewFor(m: MigrationMapping): Overview | null {
+  return resolveAzureServiceOverview(m.azureResource, {
+    whyRecommended: `Your ${m.currentState} was detected as a ${CATEGORY_LABEL[m.category].toLowerCase()} component, and ${m.azureState} is its recommended Azure-native target.`,
+    replaces: m.currentState,
+    migrationNotes: m.notes,
+  })
+}
+
+function MappingRow({ m, onOpen }: { m: MigrationMapping; onOpen: (o: Overview) => void }) {
+  const interactive = hasAzureServiceProfile(m.azureResource)
+  const overview = interactive ? overviewFor(m) : null
+
+  const body = (
+    <>
       <div className="flex items-center gap-2 flex-wrap mb-1.5">
         <span className="font-mono text-[10px] uppercase tracking-wider text-slate-500">
           {CATEGORY_LABEL[m.category]}
@@ -59,6 +81,12 @@ function MappingRow({ m }: { m: MigrationMapping }) {
         <span className="text-white font-medium text-sm">{m.currentState}</span>
         <span className="text-slate-600">→</span>
         <span className="text-azure-300 font-medium text-sm">{m.azureState}</span>
+        {interactive && (
+          <span className="inline-flex items-center gap-1 text-azure-400 text-[11px] font-medium ml-auto">
+            View Azure service
+            <ArrowRight size={12} aria-hidden="true" />
+          </span>
+        )}
       </div>
       <p className="text-slate-400 text-xs mt-1">{m.notes}</p>
       {m.detectedFrom.length > 0 && (
@@ -66,11 +94,28 @@ function MappingRow({ m }: { m: MigrationMapping }) {
           Evidence: {m.detectedFrom.join(', ')}
         </p>
       )}
-    </div>
+    </>
+  )
+
+  if (!interactive || !overview) {
+    return <div className="px-5 py-4">{body}</div>
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => onOpen(overview)}
+      aria-label={`View Azure service overview for ${m.azureResource}`}
+      className="w-full text-left px-5 py-4 transition-colors hover:bg-azure/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-azure"
+    >
+      {body}
+    </button>
   )
 }
 
 export default function MigrationPlanPanel({ plan }: { plan: MigrationPlan | null }) {
+  const [overview, setOverview] = useState<Overview | null>(null)
+
   if (!plan) {
     return (
       <div className="rounded-xl bg-rm-dark-2/70 border border-slate-800 p-10 text-center">
@@ -83,7 +128,8 @@ export default function MigrationPlanPanel({ plan }: { plan: MigrationPlan | nul
     <div className="flex flex-col gap-6">
       <div className="rounded-xl bg-rm-dark-2/70 border border-azure/30 p-5">
         <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 mb-1">Azure migration plan</p>
-        <h3 className="text-white font-semibold text-base">How this repository maps onto Azure</h3>
+        <h3 className="text-white font-semibold text-base">What is each Azure service, and how does it fit your platform?</h3>
+        <p className="text-slate-500 text-xs mt-1">Select any recommended Azure service to open its full overview.</p>
         <div className="flex items-center gap-2 flex-wrap mt-3">
           <span className="px-2.5 py-1 rounded text-xs font-semibold bg-emerald-900/40 text-emerald-300">{plan.counts.remain} can remain</span>
           <span className="px-2.5 py-1 rounded text-xs font-semibold bg-azure/20 text-azure-300">{plan.counts.migrate} to migrate</span>
@@ -106,12 +152,18 @@ export default function MigrationPlanPanel({ plan }: { plan: MigrationPlan | nul
             </div>
             <div className="divide-y divide-slate-800/50">
               {items.map((m, i) => (
-                <MappingRow key={`${m.category}-${m.currentState}-${i}`} m={m} />
+                <MappingRow key={`${m.category}-${m.currentState}-${i}`} m={m} onOpen={setOverview} />
               ))}
             </div>
           </div>
         )
       })}
+
+      <AzureServiceOverview
+        overview={overview}
+        onClose={() => setOverview(null)}
+        onSelectResource={(resource) => setOverview(resolveAzureServiceOverview(resource))}
+      />
     </div>
   )
 }

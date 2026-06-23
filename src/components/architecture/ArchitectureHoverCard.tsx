@@ -1,19 +1,30 @@
 'use client'
 
-import { CheckCircle2, MousePointerClick } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Cloud, MousePointerClick } from 'lucide-react'
 import {
   CONFIDENCE_LABEL,
   confidenceExplanation,
   type ArchNode,
 } from '../../lib/repository/architecture-model'
+import { hasAzureServiceProfile } from '../../lib/repository/azure-service-catalog'
 import { CONFIDENCE_STYLE, KIND_STYLE, NODE_ICON } from './archStyles'
 
 /**
  * The inspector panel. Shows the full information model for the active node:
  * What this is, Purpose, Deployment notes, Evidence, Confidence.
  * Updated on hover or keyboard focus of any node.
+ *
+ * When the node maps to a known Azure service, it offers a link into the shared
+ * Azure Service Overview (azure-service-catalog) — the same overview Migration
+ * Planning opens.
  */
-export default function ArchitectureHoverCard({ node }: { node: ArchNode | null }) {
+export default function ArchitectureHoverCard({
+  node,
+  onViewService,
+}: {
+  node: ArchNode | null
+  onViewService?: (resource: string) => void
+}) {
   if (!node) {
     return (
       <div
@@ -55,6 +66,20 @@ export default function ArchitectureHoverCard({ node }: { node: ArchNode | null 
       {node.description && <Field label="What this is" value={node.description} />}
       <Field label="Purpose" value={node.purpose} />
       <Field label="Deployment notes" value={node.deploymentRecommendation ?? 'Not yet determined.'} />
+
+      {onViewService && hasAzureServiceProfile(node.azureResource) && (
+        <button
+          type="button"
+          onClick={() => onViewService(node.azureResource as string)}
+          className="inline-flex items-center justify-between gap-2 rounded-lg border border-azure/30 bg-azure/10 px-3 py-2 text-sm font-medium text-azure-300 transition-colors hover:border-azure hover:bg-azure/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-azure"
+        >
+          <span className="inline-flex items-center gap-2">
+            <Cloud size={15} aria-hidden="true" />
+            View Azure service overview
+          </span>
+          <ArrowRight size={14} aria-hidden="true" />
+        </button>
+      )}
 
       {node.detectedFrom.length > 0 && (
         <div>
